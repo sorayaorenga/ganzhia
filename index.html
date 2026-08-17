@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#faf8f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>GanzhIA — Espelho do Zodíaco Chinês</title>
+<style>
+:root {
+  --bg: #faf8f5; --bg-card: #ffffff; --text: #2c2420; --text-light: #6b5e55;
+  --accent: #b07d62; --accent-light: #c9a48d; --accent-dark: #8a5e45;
+  --sage: #8a9a7a; --sage-light: #a8b89a; --sage-dark: #6a7a5a;
+  --gold: #c9a96e; --gold-light: #e0c99a; --border: #e8e2db;
+  --shadow: rgba(44,36,32,0.06); --radius: 20px; --radius-sm: 12px;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+#splash {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+#splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.logo-svg {
+  width: 140px; height: 140px;
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+.logo-text {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  color: var(--text);
+  margin-top: 24px;
+  letter-spacing: 2px;
+}
+.logo-text span {
+  color: var(--accent);
+  font-weight: 700;
+}
+.tagline {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 90px;
+}
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,248,245,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.app-header .logo-small {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--text);
+}
+.app-header .logo-small span {
+  color: var(--accent);
+  font-weight: 700;
+}
+.moon-phase {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; color: var(--text-light);
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.page {
+  display: none;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+.page.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 16px var(--shadow);
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.card-sub {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 16px;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 1rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.btn-primary:disabled {
+  background: var(--border);
+  color: var(--text-light);
+  cursor: not-allowed;
+}
+.btn-sage {
+  background: var(--sage);
+  color: white;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+input, select, textarea {
+  width: 100%; padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem; font-family: var(--font-sans);
+  background: var(--bg-card);
+  color: var(--text);
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+textarea { min-height: 100px; resize: vertical; }
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.week-tracker {
+  display: flex; justify-content: space-between;
+  gap: 6px; margin-bottom: 20px;
+}
+.dot {
+  flex: 1; height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.dot.used { background: var(--accent); }
+.dot.rest { background: var(--sage); }
+.result-section {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.result-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.result-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.result-text {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+.lucky-row {
+  display: flex; gap: 12px;
+  margin-top: 16px;
+}
+.lucky-item {
+  flex: 1;
+  background: rgba(176,125,98,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+}
+.lucky-item .lucky-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+.lucky-item .lucky-value {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--accent-dark);
+}
+.diary-entry {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.diary-date {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.diary-area {
+  display: inline-block;
+  background: rgba(138,154,122,0.12);
+  color: var(--sage-dark);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.diary-question {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.diary-reflection {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+.compat-heart {
+  width: 60px; height: 60px;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(176,125,98,0.1);
+  border-radius: 50%;
+  font-size: 1.8rem;
+}
+.compat-result {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 0.65rem;
+  transition: color 0.2s;
+  border: none; background: none;
+}
+.nav-item.active { color: var(--accent); }
+.nav-item svg { width: 22px; height: 22px; }
+.onboarding-step {
+  text-align: center;
+  padding-top: 20px;
+}
+.onboarding-step h2 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+.onboarding-step p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+}
+.ganzhi-result {
+  background: rgba(176,125,98,0.06);
+  border: 2px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+}
+.ganzhi-result .animal-emoji { font-size: 3rem; margin-bottom: 8px; }
+.ganzhi-result .ganzhi-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.ganzhi-result .ganzhi-sub {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+.zodiac-2026-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.zodiac-2026-card .z-emoji { font-size: 2rem; flex-shrink: 0; }
+.zodiac-2026-card .z-content h4 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.zodiac-2026-card .z-content p {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+.map-stat {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+.map-stat-bar {
+  flex: 1; height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.map-stat-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.map-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  width: 80px;
+}
+.map-stat-count {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  width: 24px; text-align: right;
+}
+.tai-sui-banner {
+  background: rgba(138,154,122,0.08);
+  border: 1px solid var(--sage-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8rem;
+  color: var(--sage-dark);
+}
+.tai-sui-banner svg { flex-shrink: 0; }
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-light);
+}
+.empty-state svg {
+  width: 64px; height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+.empty-state p {
+  font-size: 0.9rem;
+}
+::-webkit-scrollbar { width: 0; background: transparent; }
+@media (min-width: 431px) {
+  body { background: #e8e2db; }
+  #app { background: var(--bg); min-height: 100vh; }
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <svg class="logo-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="70" cy="70" r="65" stroke="#b07d62" stroke-width="1.5" opacity="0.3"/>
+    <circle cx="70" cy="70" r="50" stroke="#b07d62" stroke-width="1" opacity="0.2"/>
+    <circle cx="70" cy="5" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="102" cy="12" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="125" cy="35" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="132" cy="67" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="125" cy="100" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="102" cy="123" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="70" cy="130" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="38" cy="123" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="15" cy="100" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="8" cy="67" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="15" cy="35" r="3" fill="#b07d62" opacity="0.6"/>
+    <circle cx="38" cy="12" r="3" fill="#b07d62" opacity="0.6"/>
+    <text x="70" y="78" text-anchor="middle" font-size="36" fill="#2c2420" font-family="Georgia,serif" font-weight="bold">G</text>
+  </svg>
+  <div class="logo-text">Ganzh<span>IA</span></div>
+  <div class="tagline">Tronco, ramo e inteligência</div>
+</div>
+
+<div id="app">
+
+  <div class="app-header" id="appHeader" style="display:none;">
+    <div class="logo-small">Ganzh<span>IA</span></div>
+    <div class="moon-phase" id="moonPhase">
+      <span id="moonIcon">🌑</span>
+      <span id="moonText">Lua Nova</span>
+    </div>
+  </div>
+
+  <div class="page active" id="page-onboarding">
+    <div class="onboarding-step" id="ob-step1">
+      <div style="font-size:4rem;margin-bottom:16px;">🐉</div>
+      <h2>Bem-vindo ao GanzhIA</h2>
+      <p>Espelho, não conselheiro.<br>Iluminação, não comando.</p>
+      <button class="btn btn-primary" onclick="nextOb(2)">Começar</button>
+    </div>
+
+    <div class="onboarding-step" id="ob-step2" style="display:none;">
+      <h2>Quando você nasceu?</h2>
+      <p>Calculamos seu Tronco Celestial e Ramo Terrestre automaticamente.</p>
+      <label>Data de nascimento</label>
+      <input type="date" id="birthDate" max="2026-12-31">
+      <label>Hora de nascimento (opcional)</label>
+      <select id="birthHour">
+        <option value="">Não sei / Prefiro não informar</option>
+        <option value="0">23h — 01h (Rato)</option>
+        <option value="1">01h — 03h (Boi)</option>
+        <option value="2">03h — 05h (Tigre)</option>
+        <option value="3">05h — 07h (Coelho)</option>
+        <option value="4">07h — 09h (Dragão)</option>
+        <option value="5">09h — 11h (Serpente)</option>
+        <option value="6">11h — 13h (Cavalo)</option>
+        <option value="7">13h — 15h (Cabra)</option>
+        <option value="8">15h — 17h (Macaco)</option>
+        <option value="9">17h — 19h (Galo)</option>
+        <option value="10">19h — 21h (Cão)</option>
+        <option value="11">21h — 23h (Porco)</option>
+      </select>
+      <button class="btn btn-primary" onclick="calculateGanzhi()">Revelar meu Ganzhi</button>
+    </div>
+
+    <div class="onboarding-step" id="ob-step3" style="display:none;">
+      <div class="ganzhi-result" id="ganzhiResult"></div>
+      <p style="color:var(--text-light);font-size:0.85rem;margin-bottom:20px;">
+        Seu signo animal é o <strong id="resAnimal"></strong>.<br>
+        Seu elemento é <strong id="resElement"></strong>.<br>
+        Sua polaridade é <strong id="resPolarity"></strong>.
+      </p>
+      <button class="btn btn-primary" onclick="finishOnboarding()">Entrar no espelho</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-home">
+    <div class="tai-sui-banner" id="taiSuiBanner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+      <span id="taiSuiText">Ano do Cavalo de Fogo — direção Sudeste em atenção</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Consultas desta semana</div>
+      <div class="card-sub">1 por dia · máximo 5</div>
+      <div class="week-tracker" id="weekTracker"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" id="btnConsulta" onclick="goToConsulta()">
+          <span>🌿</span> Consulta de hoje
+        </button>
+      </div>
+      <div id="consultaLimitMsg" style="display:none;margin-top:12px;font-size:0.8rem;color:var(--text-light);text-align:center;">
+        O espelho descansa para que você também descanse. Volte amanhã.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Panorama da semana</div>
+      <div class="card-sub">Não conta nas 5 consultas · Renova toda segunda</div>
+      <button class="btn btn-sage" onclick="goToWeekly()">
+        <span>🌙</span> Ver panorama
+      </button>
+    </div>
+
+    <div class="card" id="lastReadingCard" style="display:none;">
+      <div class="card-title">Última reflexão</div>
+      <div class="card-sub" id="lastReadingDate"></div>
+      <div id="lastReadingContent" style="font-family:var(--font-serif);font-size:0.95rem;color:var(--text);line-height:1.6;"></div>
+      <button class="btn btn-ghost" style="margin-top:12px;" onclick="goToDiario()">Ver diário completo</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-consulta">
+    <div class="card">
+      <div class="card-title">Nova consulta</div>
+      <div class="card-sub">Uma pergunta · Uma iluminação</div>
+
+      <label>Área da vida</label>
+      <select id="consultaArea" onchange="toggleCustomArea()">
+        <option value="amor">Amor & Relacionamentos</option>
+        <option value="carreira">Carreira & Trabalho</option>
+        <option value="dinheiro">Dinheiro & Finanças</option>
+        <option value="saude">Saúde & Bem-estar</option>
+        <option value="familia">Família & Lar</option>
+        <option value="crescimento">Crescimento Pessoal</option>
+        <option value="outros">Outros (especifique)</option>
+      </select>
+      <input type="text" id="customArea" placeholder="Qual área? (ex: espiritualidade, mudança de cidade...)" style="display:none;">
+
+      <label>Sua pergunta</label>
+      <textarea id="consultaPergunta" placeholder="Escreva aqui o que ecoa em você..."></textarea>
+
+      <button class="btn btn-primary" onclick="fazerConsulta()">Iluminar</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-resultado">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div id="resAnimalEmoji" style="font-size:2.5rem;"></div>
+        <div style="font-family:var(--font-serif);font-size:1.1rem;color:var(--text-light);" id="resGanzhiLabel"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-label">Reflexão</div>
+        <div class="result-text" id="resReflexao"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-label">Iluminação</div>
+        <div class="result-text" id="resIluminacao"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-label">Para você ponderar</div>
+        <div class="result-text" id="resPergunta" style="font-style:italic;color:var(--accent-dark);"></div>
+      </div>
+
+      <div class="lucky-row">
+        <div class="lucky-item">
+          <div class="lucky-label">Cor da sorte</div>
+          <div class="lucky-value" id="resCor"></div>
+        </div>
+        <div class="lucky-item">
+          <div class="lucky-label">Números</div>
+          <div class="lucky-value" id="resNumeros"></div>
+        </div>
+        <div class="lucky-item">
+          <div class="lucky-label">Direção</div>
+          <div class="lucky-value" id="resDirecao"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn btn-sage" onclick="salvarDiario()">Guardar no diário</button>
+        <button class="btn btn-ghost" onclick="goToPage('home')">Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-weekly">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:2.5rem;">🔥🐴</div>
+        <div class="card-title" style="margin-top:8px;">Panorama da Semana</div>
+        <div class="card-sub">Ano do Cavalo de Fogo · 2026</div>
+      </div>
+      <div class="result-text" id="weeklyContent"></div>
+      <div class="lucky-row" style="margin-top:20px;">
+        <div class="lucky-item">
+          <div class="lucky-label">Energia da semana</div>
+          <div class="lucky-value" id="weeklyEnergy"></div>
+        </div>
+        <div class="lucky-item">
+          <div class="lucky-label">Cuidado com</div>
+          <div class="lucky-value" id="weeklyCaution"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:20px;" onclick="goToPage('home')">Voltar</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-compat">
+    <div class="card">
+      <div class="card-title">Compatibilidade</div>
+      <div class="card-sub">Energia entre dois signos</div>
+
+      <label>Seu signo</label>
+      <select id="compat1"></select>
+      <label>Outro signo</label>
+      <select id="compat2"></select>
+
+      <button class="btn btn-primary" onclick="calcularCompat()" style="margin-top:8px;">Ver energia</button>
+
+      <div id="compatResult" style="display:none;margin-top:20px;">
+        <div class="compat-heart" id="compatHeart"></div>
+        <div class="compat-result" id="compatText"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-2026">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:2.5rem;">🔥🐴</div>
+      <h2 style="font-family:var(--font-serif);font-size:1.3rem;">2026 — Ano do Cavalo de Fogo</h2>
+      <p style="font-size:0.85rem;color:var(--text-light);">Como cada signo dança com essa energia</p>
+    </div>
+    <div id="zodiac2026List"></div>
+  </div>
+
+  <div class="page" id="page-mapa">
+    <div class="card">
+      <div class="card-title">Seu Mapa Pessoal</div>
+      <div class="card-sub">Padrões que emergem com o tempo</div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:12px;">Áreas mais visitadas</div>
+        <div id="mapaAreas"></div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:12px;">Linha do tempo</div>
+        <div id="mapaTimeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-diario">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="font-family:var(--font-serif);font-size:1.3rem;">Diário</h2>
+      <span style="font-size:0.8rem;color:var(--text-light);" id="diarioCount"></span>
+    </div>
+    <div id="diarioList"></div>
+  </div>
+
+  <div class="page" id="page-perfil">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div id="profileEmoji" style="font-size:3rem;"></div>
+        <div style="font-family:var(--font-serif);font-size:1.2rem;margin-top:8px;" id="profileName"></div>
+        <div style="font-size:0.85rem;color:var(--text-light);" id="profileGanzhi"></div>
+      </div>
+
+      <div style="margin-bottom:16px;"><label>Signo</label><div id="profileSigno" style="padding:14px 16px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);"></div></div>
+      <div style="margin-bottom:16px;"><label>Elemento</label><div id="profileElemento" style="padding:14px 16px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);"></div></div>
+      <div style="margin-bottom:16px;"><label>Polaridade</label><div id="profilePolaridade" style="padding:14px 16px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);"></div></div>
+      <div style="margin-bottom:16px;"><label>Hora de nascimento (Shichen)</label><div id="profileHora" style="padding:14px 16px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);"></div></div>
+      <div style="margin-bottom:16px;"><label>Casa da Vida (Ming Gong)</label><div id="profileMingGong" style="padding:14px 16px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);"></div></div>
+
+      <button class="btn btn-ghost" onclick="resetApp()">Recomeçar (apaga dados)</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav" style="display:none;">
+    <button class="nav-item active" onclick="goToPage('home')" data-page="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início
+    </button>
+    <button class="nav-item" onclick="goToPage('compat')" data-page="compat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Compat.
+    </button>
+    <button class="nav-item" onclick="goToPage('2026')" data-page="2026">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2026
+    </button>
+    <button class="nav-item" onclick="goToPage('mapa')" data-page="mapa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 21 18 21 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mapa
+    </button>
+    <button class="nav-item" onclick="goToPage('diario')" data-page="diario">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Diário
+    </button>
+  </nav>
+
+</div>
+
+<script>const animals = [
+  { name: "Rato", emoji: "🐀", years: [1924,1936,1948,1960,1972,1984,1996,2008,2020], strength: "Adaptabilidade e visão", challenge: "Inquietação excessiva", areas: { amor: "Seduz com inteligência, mas pode parecer distante", carreira: "Excelente em crises e oportunidades", dinheiro: "Acumula aos poucos com estratégia", saude: "Nervosismo e digestão pedem atenção", familia: "Protetor, mas às vezes ausente", crescimento: "Aprende observando os detalhes" } },
+  { name: "Boi", emoji: "🐂", years: [1925,1937,1949,1961,1973,1985,1997,2009,2021], strength: "Paciência e constância", challenge: "Teimosia e lentidão para mudar", areas: { amor: "Leal até o fim, mas rígido", carreira: "Constrói com método e disciplina", dinheiro: "Segurança financeira é prioridade", saude: "Força física, cuidado com rigidez", familia: "Pilar estável, às vezes autoritário", crescimento: "Cresce através da persistência" } },
+  { name: "Tigre", emoji: "🐅", years: [1926,1938,1950,1962,1974,1986,1998,2010,2022], strength: "Coragem e magnetismo", challenge: "Impulsividade e autoritarismo", areas: { amor: "Paixão intensa, mas instável", carreira: "Lidera com carisma e risco", dinheiro: "Ganha e gasta com impulso", saude: "Energia alta, cuidado com estresse", familia: "Protetor feroz, mas dominador", crescimento: "Evolui através de desafios" } },
+  { name: "Coelho", emoji: "🐇", years: [1927,1939,1951,1963,1975,1987,1999,2011,2023], strength: "Diplomacia e sensibilidade", challenge: "Indecisão e evitação de conflitos", areas: { amor: "Romântico e atencioso", carreira: "Excelente em ambientes harmoniosos", dinheiro: "Conservador e cauteloso", saude: "Emocional reflete no físico", familia: "Acolhedor, mas reservado", crescimento: "Floresce com segurança" } },
+  { name: "Dragão", emoji: "🐉", years: [1928,1940,1952,1964,1976,1988,2000,2012,2024], strength: "Ambição e criatividade", challenge: "Arrogância e impaciência", areas: { amor: "Magnético, mas intenso demais", carreira: "Visionário e inovador", dinheiro: "Grande visão, riscos calculados", saude: "Vitalidade alta, cuidado com exaustão", familia: "Generoso, mas exige reconhecimento", crescimento: "Transforma-se pelo fogo interior" } },
+  { name: "Serpente", emoji: "🐍", years: [1929,1941,1953,1965,1977,1989,2001,2013,2025], strength: "Sabedoria e intuição", challenge: "Desconfiança e ciúme", areas: { amor: "Profundo e misterioso", carreira: "Estrategista e analítico", dinheiro: "Investe com inteligência", saude: "Intuição corporal aguçada", familia: "Leal, mas reservado", crescimento: "Renova-se abandonando peles" } },
+  { name: "Cavalo", emoji: "🐎", years: [1930,1942,1954,1966,1978,1990,2002,2014,2026], strength: "Energia e independência", challenge: "Inquietação e impaciência", areas: { amor: "Livre e apaixonado", carreira: "Dinâmico e comunicativo", dinheiro: "Ganha rápido, gasta rápido", saude: "Resistência física, mente inquieta", familia: "Presente em ação, ausente em rotina", crescimento: "Cresce em movimento" } },
+  { name: "Cabra", emoji: "🐐", years: [1931,1943,1955,1967,1979,1991,2003,2015,2027], strength: "Criatividade e ternura", challenge: "Insegurança e dependência", areas: { amor: "Romântico e sensível", carreira: "Artístico e detalhista", dinheiro: "Gosta de conforto material", saude: "Sensível a ambientes hostis", familia: "Acolhedor, mas vulnerável", crescimento: "Floresce com afeto e beleza" } },
+  { name: "Macaco", emoji: "🐒", years: [1932,1944,1956,1968,1980,1992,2004,2016,2028], strength: "Inteligência e versatilidade", challenge: "Manipulação e falta de foco", areas: { amor: "Divertido, mas inconsistente", carreira: "Inventivo e adaptável", dinheiro: "Oportunista e criativo", saude: "Mente ativa, corpo precisa descanso", familia: "Animado, mas disperso", crescimento: "Evolui pela curiosidade" } },
+  { name: "Galo", emoji: "🐓", years: [1933,1945,1957,1969,1981,1993,2005,2017,2029], strength: "Organização e honestidade", challenge: "Perfeccionismo e crítica", areas: { amor: "Fiel, mas exigente", carreira: "Meticuloso e pontual", dinheiro: "Planeja e economiza", saude: "Preocupação excessiva gera tensão", familia: "Responsável, mas rígido", crescimento: "Amadurece aceitando imperfeições" } },
+  { name: "Cão", emoji: "🐕", years: [1934,1946,1958,1970,1982,1994,2006,2018,2030], strength: "Lealdade e justiça", challenge: "Ansiedade e pessimismo", areas: { amor: "Devoto, mas ciumento", carreira: "Confiável e ético", dinheiro: "Conservador e preocupado", saude: "Ansiedade afeta o corpo", familia: "Protetor incondicional", crescimento: "Aprende a confiar no fluxo" } },
+  { name: "Porco", emoji: "🐖", years: [1935,1947,1959,1971,1983,1995,2007,2019,2031], strength: "Generosidade e otimismo", challenge: "Ingenuidade e excessos", areas: { amor: "Carinhoso e confiável", carreira: "Dedicado e cooperativo", dinheiro: "Gosta de prazeres, mas honesto", saude: "Cuidado com excessos alimentares", familia: "Caloroso e acolhedor", crescimento: "Floresce na simplicidade" } }
+];
+
+const elements = {
+  madeira: { name: "Madeira", quality: "Crescimento, expansão, flexibilidade", impact: "Favorece novos projetos e relacionamentos" },
+  fogo: { name: "Fogo", quality: "Transformação, paixão, visibilidade", impact: "Acelera mudanças, exige cautela com impulsos" },
+  terra: { name: "Terra", quality: "Estabilidade, nutrição, consolidação", impact: "Momento de estruturar e firmar bases" },
+  metal: { name: "Metal", quality: "Precisão, determinação, letting go", impact: "Cortar o que não serve, definir limites" },
+  agua: { name: "Água", quality: "Fluxo, sabedoria, introspecção", impact: "Escutar mais, agir menos, deixar fluir" }
+};
+
+const polarities = {
+  yang: { name: "Yang", tendency: "Ação visível, projeção externa, iniciativa" },
+  yin: { name: "Yin", tendency: "Observação interna, receptividade, profundidade" }
+};
+
+const heavenlyStems = ["Jia","Yi","Bing","Ding","Wu","Ji","Geng","Xin","Ren","Gui"];
+const earthlyBranches = ["Zi","Chou","Yin","Mao","Chen","Si","Wu","Wei","Shen","You","Xu","Hai"];
+const branchAnimals = ["Rato","Boi","Tigre","Coelho","Dragão","Serpente","Cavalo","Cabra","Macaco","Galo","Cão","Porco"];
+const stemElements = ["madeira","madeira","fogo","fogo","terra","terra","metal","metal","agua","agua"];
+const stemPolarity = ["yang","yin","yang","yin","yang","yin","yang","yin","yang","yin"];
+
+const areaLabels = {
+  amor: "Amor & Relacionamentos",
+  carreira: "Carreira & Trabalho",
+  dinheiro: "Dinheiro & Finanças",
+  saude: "Saúde & Bem-estar",
+  familia: "Família & Lar",
+  crescimento: "Crescimento Pessoal",
+  outros: "Outros"
+};
+
+const colors = ["Âmbar","Jade","Ouro Velho","Terracota","Carvão","Sálvia","Índigo","Canela","Pérola","Cobre"];
+const directions = ["Norte","Sul","Leste","Oeste","Nordeste","Noroeste","Sudeste","Sudoeste"];
+
+const weekly2026 = {
+  "Rato": { text: "O Cavalo de Fogo acelera tudo ao seu redor. Você, Rato, prefere calcular antes de saltar. Esta semana, a tensão entre sua cautela e a urgência externa é o ponto de iluminação. Onde você está usando 'precaução' como desculpa para inércia?", energy: "Aceleração externa", caution: "Paralisia por análise" },
+  "Boi": { text: "O Fogo do Cavalo questiona suas estruturas. O Boi de Terra resiste, e com razão — mas resistir não é sempre sabedoria. Esta semana, observe: o que você está defendendo por necessidade real, e o que é apenas medo da mudança?", energy: "Questionamento", caution: "Teimosia disfarçada" },
+  "Tigre": { text: "Cavalo e Tigre são almas de vento. Esta semana, a energia do Fogo amplifica sua coragem natural. O risco não é a ação — é a ação sem direção. Sua força precisa de um norte, não apenas de um impulso.", energy: "Coragem amplificada", caution: "Direção perdida" },
+  "Coelho": { text: "O Fogo do Cavalo pode assustar sua sensibilidade. Mas o calor também faz brotar o que estava adormecido. Esta semana, algo que você evitou tocar pode pedir atenção gentil. Não precisa resolver tudo — apenas não fuja.", energy: "Despertar", caution: "Fuga emocional" },
+  "Dragão": { text: "Dragão e Cavalo são duas chamas. Esta semana, sua ambição natural encontra eco no ano. Projetos que estavam parados ganham asas. O risco é querer voar em todas as direções ao mesmo tempo. Escolha uma montanha.", energy: "Expansão", caution: "Dispersão" },
+  "Serpente": { text: "A Serpente observa o fogo de longe. Esta semana, sua intuição está aguçada — mas o Cavalo de Fogo pede movimento, não apenas análise. Onde você sabe a resposta há tempo e ainda não agiu?", energy: "Intuição aguda", caution: "Análise paralisante" },
+  "Cavalo": { text: "Este é seu ano, Cavalo. O Fogo dobrado pode ser euforia ou exaustão. Esta semana, a pergunta não é 'o que mais posso fazer?' — é 'o que posso fazer com presença?'. Movimento sem presença é apenas fuga.", energy: "Potência máxima", caution: "Exaustão disfarçada" },
+  "Cabra": { text: "O Fogo do Cavalo é intenso para sua sensibilidade. Mas a Cabra tem uma sabedoria silenciosa: sabe quando criar beleza até no caos. Esta semana, sua arte — seja ela qual for — é o antídoto para a agitação externa.", energy: "Criatividade protetora", caution: "Vulnerabilidade exposta" },
+  "Macaco": { text: "Macaco e Cavalo são energia pura. Esta semana, sua mente criativa encontra terreno fértil. Mas o Macaco brinca — e o Fogo de 2026 queima o que não é sério. Onde você está sendo inteligente demais e sábio de menos?", energy: "Criatividade fértil", caution: "Levianidade" },
+  "Galo": { text: "O Galo gosta de ordem. O Cavalo de Fogo desordena. Esta semana, a fricção entre seu desejo de controle e a realidade caótica é seu professor. Não é sobre abandonar a ordem — é sobre encontrar ordem dentro do movimento.", energy: "Reorganização", caution: "Controle rígido" },
+  "Cão": { text: "O Cão é leal ao que conhece. O Cavalo de Fogo traz o novo. Esta semana, algo ou alguém pode desafiar sua zona de conforto. Sua lealdade não precisa ser cega — ela pode ser escolhida, todos os dias.", energy: "Desafio ao conforto", caution: "Lealdade automática" },
+  "Porco": { text: "O Porco flui como a água. O Cavalo de Fogo evapora a água se ela não tiver raízes. Esta semana, seus sonhos generosos precisam de estrutura. Otimismo sem fundação é ilusão — mas ilusão reconhecida vira visão.", energy: "Sonhos estruturados", caution: "Otimismo ingênuo" }
+};
+
+const zodiac2026 = [
+  { animal: "Rato", emoji: "🐀", text: "O Cavalo é seu oposto no zodíaco. 2026 é um ano de confronto saudável: o que você evita será colocado na mesa. Não é punição — é evolução forçada." },
+  { animal: "Boi", emoji: "🐂", text: "O Fogo questiona suas certezas. O Boi que aprende a flexionar sem quebrar descobre uma força nova. 2026 premia a adaptação silenciosa." },
+  { animal: "Tigre", emoji: "🐅", text: "Cavalo e Tigre correm juntos. 2026 amplifica sua energia natural — mas também seu risco de colisão. Liderança requer direção, não apenas velocidade." },
+  { animal: "Coelho", emoji: "🐇", text: "O Fogo do Cavalo pode assustar, mas também ilumina cantos escuros. 2026 traz clareza sobre relacionamentos. O que você evitou ver, verá." },
+  { animal: "Dragão", emoji: "🐉", text: "Dois signos de fogo se encontram. 2026 é seu ano de expansão visível — mas visibilidade exige responsabilidade. Brilhe, mas não queime." },
+  { animal: "Serpente", emoji: "🐍", text: "A Serpente entende o fogo melhor que ninguém — ela também renasce das cinzas. 2026 pede que você deixe de lado uma pele que já serve há tempo demais." },
+  { animal: "Cavalo", emoji: "🐎", text: "Seu ano. O Fogo dobrado é poder absoluto — ou exaustão total. 2026 não perdoa quem corre sem saber por quê. Encontre seu norte primeiro." },
+  { animal: "Cabra", emoji: "🐐", text: "O Fogo do Cavalo é intenso para sua sensibilidade. 2026 pede que você transforme sua vulnerabilidade em arte. Criar é resistir com elegância." },
+  { animal: "Macaco", emoji: "🐒", text: "Macaco e Cavalo são energia pura. 2026 é um ano de oportunidades — mas oportunidades demais são distração. Foque no que realmente importa." },
+  { animal: "Galo", emoji: "🐓", text: "O Galo gosta de ordem, e 2026 é caos organizado. Sua habilidade de estruturar será demandada — mas não tente controlar o incontrolável." },
+  { animal: "Cão", emoji: "🐕", text: "O Cão protege o que ama. Em 2026, a pergunta é: o que você está protegendo que já não precisa mais de proteção? Solte para crescer." },
+  { animal: "Porco", emoji: "🐖", text: "O Porco flui, o Cavalo arde. 2026 pede que você encontre raízes sem perder sua generosidade. Sonhos grandes precisam de fundação." }
+];
+
+const compatData = {
+  "Rato": { "Rato":"Almas que se espelham. A competição é o risco.","Boi":"Alma gêmea prática. Um enxerga, o outro constrói.","Tigre":"Atração magnética, mas choque de egos.","Coelho":"Tensão velada. O Rato é rápido demais.","Dragão":"Parceria poderosa. O Rato planeja, o Dragão brilha.","Serpente":"Intelectual e profundo. Desconfiança mútua inicial.","Cavalo":"Mundo oposto. Um foge quando o outro chega.","Cabra":"Tensão sutil. O Rato é pragmático demais.","Macaco":"Aliança criativa. Juntos inventam o impossível.","Galo":"Fricção constante. Ambos querem controle.","Cão":"Diferença de ritmo. O Cão é leal, o Rato é estrategista.","Porco":"Harmonia inesperada. O Porco acalma o Rato." },
+  "Boi": { "Rato":"Alma gêmea prática. Um constrói, o outro enxerga.","Boi":"Dupla força ou dupla teimosia.","Tigre":"Conflito de naturezas. O Tigre quer mudar, o Boi quer firmar.","Coelho":"Conforto mútuo. Ambos valorizam segurança.","Dragão":"Tensão criativa. O Boi ancora o Dragão.","Serpente":"Profundidade e lealdade. Conexão duradoura.","Cavalo":"Mundos opostos. O Cavalo foge, o Boi fica.","Cabra":"Acolhimento. O Boi protege, a Cabra cria.","Macaco":"Desconfiança. O Macaco é rápido demais.","Galo":"Respeito mútuo. Ambos valorizam ordem.","Cão":"Amizade sólida. Lealdade compartilhada.","Porco":"Harmonia tranquila. Ambos gostam de conforto." },
+  "Tigre": { "Rato":"Atração e competição. Quem lidera?","Boi":"Choque de mundos. Mudança vs estabilidade.","Tigre":"Fogo dobrado. Paixão intensa ou destruição.","Coelho":"Proteção e ternura. O Tigre defende, o Coelho acalma.","Dragão":"Poder e ambição. Dupla imbatível ou explosiva.","Serpente":"Mistério e magnetismo. Desconfiança oculta.","Cavalo":"Energia em movimento. Aventura garantida.","Cabra":"O Tigre é bruto demais. A Cabra se machuca.","Macaco":"Jogo de inteligência. Quem engana quem?","Galo":"Conflito de egos. Ambos querem brilhar.","Cão":"Lealdade feroz. O Cão segue o Tigre.","Porco":"O Porco suaviza o Tigre. Equilíbrio possível." },
+  "Coelho": { "Rato":"Velocidade diferente. O Coelho sente-se apressado.","Boi":"Segurança compartilhada. Lar e conforto.","Tigre":"Proteção intensa. O Coelho se sente seguro.","Coelho":"Sensibilidade dobrada. Muito conforto, pouca ação.","Dragão":"Atração e medo. O Dragão é intenso demais.","Serpente":"Intuição mútua. Silêncios compreendidos.","Cavalo":"Diferente demais. O Cavalo assusta o Coelho.","Cabra":"Alma gêmea artística. Criam beleza juntos.","Macaco":"O Macaco é imprevisível. O Coelho se desgasta.","Galo":"Tensão. O Galo critica, o Coelho se ofende.","Cão":"Carinho e proteção. Harmonia gentil.","Porco":"Ternura dobrada. Lar acolhedor garantido." },
+  "Dragão": { "Rato":"Parceria de poder. Estratégia + Brilho.","Boi":"Tensão produtiva. O Boi ancora o sonho.","Tigre":"Dupla de fogo. Grandeza ou explosão.","Coelho":"Intenso para o Coelho. Mas fascinante.","Dragão":"Dois sóis no mesmo céu. Brilho ou ofuscamento.","Serpente":"Sabedoria e ambição. Respeito profundo.","Cavalo":"Energia em alta. Movimento constante.","Cabra":"O Dragão é forte demais. A Cabra se retrai.","Macaco":"Aliança brilhante. Criam revoluções.","Galo":"Competição. Quem brilha mais?","Cão":"O Cão admira, mas se sente pequeno.","Porco":"O Porco acalma o fogo do Dragão." },
+  "Serpente": { "Rato":"Mente encontra mente. Estratégia pura.","Boi":"Profundidade e estabilidade. Tempo longo.","Tigre":"Magnetismo perigoso. Atração e desconfiança.","Coelho":"Intuição silenciosa. Compreensão sem palavras.","Dragão":"Ambição e sabedoria. Respeito mútuo.","Serpente":"Mistério dobrado. Ninguém entra, ninguém sai.","Cavalo":"Diferente demais. O Cavalo é externo, a Serpente interna.","Cabra":"Criatividade e sensibilidade. Arte e beleza.","Macaco":"Jogo mental. Inteligência em competição.","Galo":"Honestidade vs mistério. Fricção.","Cão":"O Cão é transparente, a Serpente é opaca.","Porco":"O Porco é ingênuo demais para a Serpente." },
+  "Cavalo": { "Rato":"Mundo oposto. Um foge, outro planeja.","Boi":"O Boi é lento demais. O Cavalo se impacienta.","Tigre":"Aventura e paixão. Energia sem limites.","Coelho":"O Cavalo assusta. O Coelho precisa de calma.","Dragão":"Movimento e brilho. Nunca parados.","Serpente":"Externo vs interno. Dificuldade de encontro.","Cavalo":"Dois ventos. Liberdade ou dispersão.","Cabra":"O Cavalo é brusco. A Cabra se machuca.","Macaco":"Diversão garantida. Mas pouca profundidade.","Galo":"Conflito de ritmo. Ambos querem liderar.","Cão":"O Cão segue, o Cavalo foge. Diferente demais.","Porco":"O Porco acalma o fogo do Cavalo." },
+  "Cabra": { "Rato":"Tensão sutil. O Rato é pragmático demais.","Boi":"Acolhimento. O Boi protege, a Cabra cria.","Tigre":"O Tigre é bruto demais. A Cabra se machuca.","Coelho":"Alma gêmea artística. Criam beleza juntos.","Dragão":"O Dragão é forte demais. A Cabra se retrai.","Serpente":"Criatividade e sensibilidade. Arte e beleza.","Cavalo":"O Cavalo é brusco. A Cabra se machuca.","Cabra":"Sensibilidade dobrada. Muita ternura, pouca ação.","Macaco":"O Macaco é imprevisível. A Cabra se desgasta.","Galo":"O Galo critica. A Cabra se ofende.","Cão":"Proteção gentil. O Cão cuida, a Cabra cria.","Porco":"Ternura dobrada. Lar acolhedor garantido." },
+  "Macaco": { "Rato":"Aliança criativa. Juntos inventam o impossível.","Boi":"Desconfiança. O Macaco é rápido demais.","Tigre":"Jogo de inteligência. Quem engana quem?","Coelho":"O Macaco é imprevisível. O Coelho se desgasta.","Dragão":"Aliança brilhante. Criam revoluções.","Serpente":"Jogo mental. Inteligência em competição.","Cavalo":"Diversão garantida. Mas pouca profundidade.","Cabra":"O Macaco é imprevisível. A Cabra se desgasta.","Macaco":"Diversão dobrada. Mas quem segura a barra?","Galo":"Conflito. O Galo quer ordem, o Macaco caos.","Cão":"Diferente demais. O Cão é sério, o Macaco brinca.","Porco":"O Porco é ingênuo demais para o Macaco." },
+  "Galo": { "Rato":"Fricção constante. Ambos querem controle.","Boi":"Respeito mútuo. Ambos valorizam ordem.","Tigre":"Conflito de egos. Ambos querem brilhar.","Coelho":"Tensão. O Galo critica, o Coelho se ofende.","Dragão":"Competição. Quem brilha mais?","Serpente":"Honestidade vs mistério. Fricção.","Cavalo":"Conflito de ritmo. Ambos querem liderar.","Cabra":"O Galo critica. A Cabra se ofende.","Macaco":"Conflito. O Galo quer ordem, o Macaco caos.","Galo":"Perfeccionismo dobrado. Ou respeito mútuo.","Cão":"Lealdade compartilhada. Mas o Galo critica.","Porco":"O Porco é relaxado demais para o Galo." },
+  "Cão": { "Rato":"Diferença de ritmo. O Cão é leal, o Rato é estrategista.","Boi":"Amizade sólida. Lealdade compartilhada.","Tigre":"Lealdade feroz. O Cão segue o Tigre.","Coelho":"Carinho e proteção. Harmonia gentil.","Dragão":"O Cão admira, mas se sente pequeno.","Serpente":"O Cão é transparente, a Serpente é opaca.","Cavalo":"O Cão segue, o Cavalo foge. Diferente demais.","Cabra":"Proteção gentil. O Cão cuida, a Cabra cria.","Macaco":"Diferente demais. O Cão é sério, o Macaco brinca.","Galo":"Lealdade compartilhada. Mas o Galo critica.","Cão":"Lealdade dobrada. Ou ciúme mútuo.","Porco":"Harmonia tranquila. Ambos valorizam o lar." },
+  "Porco": { "Rato":"Harmonia inesperada. O Porco acalma o Rato.","Boi":"Harmonia tranquila. Ambos gostam de conforto.","Tigre":"O Porco suaviza o Tigre. Equilíbrio possível.","Coelho":"Ternura dobrada. Lar acolhedor garantido.","Dragão":"O Porco acalma o fogo do Dragão.","Serpente":"O Porco é ingênuo demais para a Serpente.","Cavalo":"O Porco acalma o fogo do Cavalo.","Cabra":"Ternura dobrada. Lar acolhedor garantido.","Macaco":"O Porco é ingênuo demais para o Macaco.","Galo":"O Porco é relaxado demais para o Galo.","Cão":"Harmonia tranquila. Ambos valorizam o lar.","Porco":"Generosidade dobrada. Ou excessos juntos." }
+};
+
+let user = JSON.parse(localStorage.getItem('ganzhia_user')) || null;
+let diary = JSON.parse(localStorage.getItem('ganzhia_diary')) || [];
+let currentResult = null;
+
+function getGanzhi(year) {
+  const stemIndex = (year - 4) % 10;
+  const branchIndex = (year - 4) % 12;
+  return {
+    stem: heavenlyStems[stemIndex],
+    branch: earthlyBranches[branchIndex],
+    animal: branchAnimals[branchIndex],
+    element: stemElements[stemIndex],
+    polarity: stemPolarity[stemIndex],
+    stemIndex, branchIndex
+  };
+}
+
+function getMingGong(month, hour) {
+  const monthNum = parseInt(month) || 1;
+  const hourNum = parseInt(hour) || 0;
+  const mg = (monthNum + hourNum) % 12;
+  return branchAnimals[mg];
+}
+
+function getMoonPhase() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const day = now.getDate();
+  const c = Math.floor((year - 1900) / 100);
+  const e = Math.floor((year - 1900) % 100);
+  const jd = 367 * year - Math.floor(7 * (year + Math.floor((month + 10) / 12)) / 4) + Math.floor(275 * (month + 1) / 9) + day + 1721013.5;
+  const daysSinceNew = jd - 2451549.5;
+  const newMoons = daysSinceNew / 29.53;
+  const phase = (newMoons - Math.floor(newMoons)) * 29.53;
+  if (phase < 1) return { icon: "🌑", text: "Lua Nova" };
+  if (phase < 7) return { icon: "🌒", text: "Lua Crescente" };
+  if (phase < 14) return { icon: "🌓", text: "Quarto Crescente" };
+  if (phase < 15) return { icon: "🌔", text: "Lua Cheia" };
+  if (phase < 22) return { icon: "🌕", text: "Lua Cheia" };
+  if (phase < 29) return { icon: "🌖", text: "Lua Minguante" };
+  return { icon: "🌑", text: "Lua Nova" };
+}
+
+function getWeekUsage() {
+  const data = localStorage.getItem('ganzhia_week');
+  if (!data) return { used: [], weekStart: null };
+  const parsed = JSON.parse(data);
+  const now = new Date();
+  const weekStart = new Date(parsed.weekStart);
+  const diff = (now - weekStart) / (1000 * 60 * 60 * 24);
+  if (diff >= 7) return { used: [], weekStart: null };
+  return parsed;
+}
+
+function saveWeekUsage(used) {
+  const weekStart = new Date();
+  weekStart.setHours(0, 0, 0, 0);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  localStorage.setItem('ganzhia_week', JSON.stringify({ used, weekStart: weekStart.toISOString() }));
+}
+
+function getWeeklyRead() {
+  const data = localStorage.getItem('ganzhia_weekly');
+  if (!data) return null;
+  const parsed = JSON.parse(data);
+  const now = new Date();
+  const lastRead = new Date(parsed.date);
+  const diff = (now - lastRead) / (1000 * 60 * 60 * 24);
+  if (diff >= 7) return null;
+  return parsed;
+}
+
+function saveWeeklyRead() {
+  localStorage.setItem('ganzhia_weekly', JSON.stringify({ date: new Date().toISOString() }));
+}
+
+function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randomNumbers() {
+  const nums = [];
+  while (nums.length < 3) {
+    const n = Math.floor(Math.random() * 99) + 1;
+    if (!nums.includes(n)) nums.push(n);
+  }
+  return nums.join(", ");
+}
+
+function nextOb(step) {
+  document.getElementById('ob-step1').style.display = 'none';
+  document.getElementById('ob-step2').style.display = 'none';
+  document.getElementById('ob-step3').style.display = 'none';
+  document.getElementById('ob-step' + step).style.display = 'block';
+}
+
+function calculateGanzhi() {
+  const dateVal = document.getElementById('birthDate').value;
+  if (!dateVal) { alert('Por favor, informe sua data de nascimento.'); return; }
+  const date = new Date(dateVal);
+  const year = date.getFullYear();
+  const gz = getGanzhi(year);
+  const animal = animals.find(a => a.name === gz.animal);
+  const hourVal = document.getElementById('birthHour').value;
+  const month = date.getMonth() + 1;
+  const mingGong = getMingGong(month, hourVal);
+
+  user = {
+    birthDate: dateVal,
+    birthHour: hourVal,
+    animal: gz.animal,
+    element: gz.element,
+    polarity: gz.polarity,
+    stem: gz.stem,
+    branch: gz.branch,
+    mingGong: mingGong,
+    emoji: animal.emoji
+  };
+  localStorage.setItem('ganzhia_user', JSON.stringify(user));
+
+  document.getElementById('ganzhiResult').innerHTML = `
+    <div class="animal-emoji">${animal.emoji}</div>
+    <div class="ganzhi-title">${gz.stem} ${gz.branch}</div>
+    <div class="ganzhi-sub">${gz.animal} de ${elements[gz.element].name} ${gz.polarity === 'yang' ? 'Yang' : 'Yin'}</div>
+  `;
+  document.getElementById('resAnimal').textContent = gz.animal;
+  document.getElementById('resElement').textContent = elements[gz.element].name;
+  document.getElementById('resPolarity').textContent = gz.polarity === 'yang' ? 'Yang' : 'Yin';
+  nextOb(3);
+}
+
+function finishOnboarding() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('appHeader').style.display = 'flex';
+  document.getElementById('bottomNav').style.display = 'flex';
+  initApp();
+}
+
+function initApp() {
+  updateMoon();
+  renderWeekTracker();
+  renderLastReading();
+  render2026();
+  renderDiario();
+  renderMapa();
+  fillCompatSelects();
+  updateProfile();
+}
+
+function updateMoon() {
+  const mp = getMoonPhase();
+  document.getElementById('moonIcon').textContent = mp.icon;
+  document.getElementById('moonText').textContent = mp.text;
+}
+
+function renderWeekTracker() {
+  const week = getWeekUsage();
+  const container = document.getElementById('weekTracker');
+  container.innerHTML = '';
+  const dayNames = ['D','S','T','Q','Q','S','S'];
+  const today = new Date().getDay();
+  for (let i = 0; i < 7; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    if (week.used && week.used.includes(i)) dot.classList.add('used');
+    if (i === today) dot.style.opacity = '1';
+    else dot.style.opacity = '0.5';
+    container.appendChild(dot);
+  }
+  const canConsult = !week.used || week.used.length < 5;
+  document.getElementById('btnConsulta').disabled = !canConsult;
+  document.getElementById('consultaLimitMsg').style.display = canConsult ? 'none' : 'block';
+}
+
+function renderLastReading() {
+  if (diary.length === 0) {
+    document.getElementById('lastReadingCard').style.display = 'none';
+    return;
+  }
+  const last = diary[diary.length - 1];
+  document.getElementById('lastReadingCard').style.display = 'block';
+  document.getElementById('lastReadingDate').textContent = new Date(last.date).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('lastReadingContent').innerHTML = `<em>"${last.question}"</em><br><br>${last.reflection.substring(0, 120)}...`;
+}
+
+function goToPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navBtn = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (navBtn) navBtn.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'mapa') renderMapa();
+  if (page === 'diario') renderDiario();
+  if (page === 'perfil') updateProfile();
+}
+
+function goToConsulta() {
+  const week = getWeekUsage();
+  if (week.used && week.used.length >= 5) return;
+  goToPage('consulta');
+}
+
+function goToWeekly() {
+  const w = weekly2026[user.animal];
+  document.getElementById('weeklyContent').textContent = w.text;
+  document.getElementById('weeklyEnergy').textContent = w.energy;
+  document.getElementById('weeklyCaution').textContent = w.caution;
+  goToPage('weekly');
+}
+
+function toggleCustomArea() {
+  const sel = document.getElementById('consultaArea');
+  document.getElementById('customArea').style.display = sel.value === 'outros' ? 'block' : 'none';
+}
+
+function fazerConsulta() {
+  const area = document.getElementById('consultaArea').value;
+  const customArea = document.getElementById('customArea').value;
+  const pergunta = document.getElementById('consultaPergunta').value.trim();
+  if (!pergunta) { alert('Escreva sua pergunta primeiro.'); return; }
+
+  const animal = animals.find(a => a.name === user.animal);
+  const elem = elements[user.element];
+  const pol = polarities[user.polarity];
+  const areaKey = area === 'outros' ? 'crescimento' : area;
+  const areaText = area === 'outros' ? (customArea || 'Outros') : areaLabels[area];
+
+  const reflexoes = [
+    `Como ${user.animal} de ${elem.name} ${pol.name}, você carrega ${animal.areas[areaKey] || animal.areas.crescimento}. A pergunta sobre ${areaText.toLowerCase()} ecoa essa energia.`,
+    `Seu ${user.animal} de ${elem.name} ${pol.name} tende a ${pol.tendency.toLowerCase()}. Na área de ${areaText.toLowerCase()}, isso se manifesta como ${animal.areas[areaKey] || animal.areas.crescimento}.`,
+    `O elemento ${elem.name} traz ${elem.quality.toLowerCase()}. Cruzado com seu ${user.animal} ${pol.name}, sua pergunta sobre ${areaText.toLowerCase()} revela: ${animal.areas[areaKey] || animal.areas.crescimento}.`
+  ];
+
+  const iluminacoes = [
+    `A pergunta que você trouxe não pede resposta — pede presença. ${animal.strength} é seu dom, mas ${animal.challenge.toLowerCase()} pode estar no caminho. O que essa pergunta espelha sobre seu padrão?`,
+    `Você não está perdido. Está no lugar exato onde ${user.element} e ${user.animal} se encontram. A iluminação está em notar que ${animal.challenge.toLowerCase()} não é defeito — é sinal de onde crescer.`,
+    `Sua pergunta sobre ${areaText.toLowerCase()} não é sobre o futuro. É sobre como você, ${user.animal} de ${elem.name}, relaciona-se com o agora. ${elem.impact}.`
+  ];
+
+  const perguntasReflexivas = [
+    `Se ${animal.strength.toLowerCase()} é sua verdade, o que ${animal.challenge.toLowerCase()} está tentando te ensinar agora?`,
+    `O que você já sabe sobre ${areaText.toLowerCase()}, mas ainda não quis ver?`,
+    `Se ninguém pudesse te julgar, qual seria sua primeira ação em relação a isso?`,
+    `${elem.impact}. Onde você sente isso no corpo?`,
+    `O que ${user.animal} de ${elem.name} ${pol.name} faria se não tivesse medo?`
+  ];
+
+  const reflexao = randomItem(reflexoes);
+  const iluminacao = randomItem(iluminacoes);
+  const perguntaRef = randomItem(perguntasReflexivas);
+  const cor = randomItem(colors);
+  const nums = randomNumbers();
+  const dir = randomItem(directions);
+
+  currentResult = {
+    date: new Date().toISOString(),
+    area: areaText,
+    question: pergunta,
+    reflection: reflexao,
+    illumination: iluminacao,
+    reflectiveQuestion: perguntaRef,
+    color: cor,
+    numbers: nums,
+    direction: dir
+  };
+
+  document.getElementById('resAnimalEmoji').textContent = user.emoji;
+  document.getElementById('resGanzhiLabel').textContent = `${user.animal} de ${elem.name} ${pol.name}`;
+  document.getElementById('resReflexao').textContent = reflexao;
+  document.getElementById('resIluminacao').textContent = iluminacao;
+  document.getElementById('resPergunta').textContent = perguntaRef;
+  document.getElementById('resCor').textContent = cor;
+  document.getElementById('resNumeros').textContent = nums;
+  document.getElementById('resDirecao').textContent = dir;
+
+  const week = getWeekUsage();
+  const today = new Date().getDay();
+  const used = week.used || [];
+  if (!used.includes(today)) used.push(today);
+  saveWeekUsage(used);
+
+  goToPage('resultado');
+}
+
+function salvarDiario() {
+  if (!currentResult) return;
+  diary.push(currentResult);
+  localStorage.setItem('ganzhia_diary', JSON.stringify(diary));
+  alert('Guardado no diário com carinho.');
+  goToPage('home');
+}
+
+function renderDiario() {
+  const list = document.getElementById('diarioList');
+  document.getElementById('diarioCount').textContent = `${diary.length} reflexão${diary.length !== 1 ? 'ões' : ''}`;
+  if (diary.length === 0) {
+    list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Seu diário está vazio.<br>As reflexões guardadas aparecerão aqui.</p></div>`;
+    return;
+  }
+  list.innerHTML = diary.slice().reverse().map((d, i) => `
+    <div class="diary-entry">
+      <div class="diary-date">${new Date(d.date).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div>
+      <div class="diary-area">${d.area}</div>
+      <div class="diary-question">"${d.question}"</div>
+      <div class="diary-reflection">${d.reflection}<br><br><em>${d.reflectiveQuestion}</em></div>
+      <div style="margin-top:10px;font-size:0.75rem;color:var(--text-light);">🎨 ${d.color} · 🔢 ${d.numbers} · 🧭 ${d.direction}</div>
+    </div>
+  `).join('');
+}
+
+function renderMapa() {
+  const areas = {};
+  diary.forEach(d => { areas[d.area] = (areas[d.area] || 0) + 1; });
+  const sorted = Object.entries(areas).sort((a, b) => b[1] - a[1]);
+  const max = Math.max(...Object.values(areas), 1);
+  document.getElementById('mapaAreas').innerHTML = sorted.map(([a, c]) => `
+    <div class="map-stat">
+      <div class="map-stat-label">${a}</div>
+      <div class="map-stat-bar"><div class="map-stat-fill" style="width:${(c/max*100)}%"></div></div>
+      <div class="map-stat-count">${c}</div>
+    </div>
+  `).join('') || '<p style="font-size:0.85rem;color:var(--text-light);">Consulte para construir seu mapa.</p>';
+
+  document.getElementById('mapaTimeline').innerHTML = diary.slice(-5).reverse().map(d => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="font-size:0.7rem;color:var(--text-light);">${new Date(d.date).toLocaleDateString('pt-BR')}</div>
+      <div style="font-size:0.85rem;color:var(--text);">${d.area}: <em>"${d.question.substring(0, 40)}..."</em></div>
+    </div>
+  `).join('') || '<p style="font-size:0.85rem;color:var(--text-light);">Sua linha do tempo aparecerá aqui.</p>';
+}
+
+function fillCompatSelects() {
+  const opts = animals.map(a => `<option value="${a.name}">${a.emoji} ${a.name}</option>`).join('');
+  document.getElementById('compat1').innerHTML = opts;
+  document.getElementById('compat2').innerHTML = opts;
+  if (user) document.getElementById('compat1').value = user.animal;
+}
+
+function calcularCompat() {
+  const s1 = document.getElementById('compat1').value;
+  const s2 = document.getElementById('compat2').value;
+  const a1 = animals.find(a => a.name === s1);
+  const a2 = animals.find(a => a.name === s2);
+  const text = compatData[s1]?.[s2] || "Energia neutra. Observe sem julgar.";
+  document.getElementById('compatResult').style.display = 'block';
+  document.getElementById('compatHeart').textContent = a1.emoji + ' ⟷ ' + a2.emoji;
+  document.getElementById('compatText').textContent = text;
+}
+
+function render2026() {
+  document.getElementById('zodiac2026List').innerHTML = zodiac2026.map(z => `
+    <div class="zodiac-2026-card">
+      <div class="z-emoji">${z.emoji}</div>
+      <div class="z-content">
+        <h4>${z.animal}</h4>
+        <p>${z.text}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateProfile() {
+  if (!user) return;
+  const elem = elements[user.element];
+  const pol = polarities[user.polarity];
+  const hourLabels = ["Rato (23h-1h)","Boi (1h-3h)","Tigre (3h-5h)","Coelho (5h-7h)","Dragão (7h-9h)","Serpente (9h-11h)","Cavalo (11h-13h)","Cabra (13h-15h)","Macaco (15h-17h)","Galo (17h-19h)","Cão (19h-21h)","Porco (21h-23h)"];
+  document.getElementById('profileEmoji').textContent = user.emoji;
+  document.getElementById('profileName').textContent = `${user.stem} ${user.branch}`;
+  document.getElementById('profileGanzhi').textContent = `${user.animal} de ${elem.name} ${pol.name}`;
+  document.getElementById('profileSigno').textContent = `${user.emoji} ${user.animal}`;
+  document.getElementById('profileElemento').textContent = `${elem.name} — ${elem.quality}`;
+  document.getElementById('profilePolaridade').textContent = `${pol.name} — ${pol.tendency}`;
+  document.getElementById('profileHora').textContent = user.birthHour !== "" ? hourLabels[parseInt(user.birthHour)] : "Não informada";
+  document.getElementById('profileMingGong').textContent = `${user.mingGong} — Casa da Vida e Propósito`;
+}
+
+function resetApp() {
+  if (!confirm('Isso apagará todos os seus dados. Tem certeza?')) return;
+  localStorage.removeItem('ganzhia_user');
+  localStorage.removeItem('ganzhia_diary');
+  localStorage.removeItem('ganzhia_week');
+  localStorage.removeItem('ganzhia_weekly');
+  location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (user) {
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hidden');
+      document.getElementById('appHeader').style.display = 'flex';
+      document.getElementById('bottomNav').style.display = 'flex';
+      initApp();
+    }, 2000);
+  } else {
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hidden');
+    }, 2500);
+  }
+});
+</script>
+</body>
+</html>
