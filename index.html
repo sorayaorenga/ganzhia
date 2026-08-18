@@ -112,6 +112,8 @@ body {
   margin-bottom: 16px;
   box-shadow: 0 2px 16px var(--shadow);
   border: 1px solid var(--border);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 .card-title {
   font-family: var(--font-serif);
@@ -283,6 +285,7 @@ label {
   color: var(--text);
   line-height: 1.7;
   margin-bottom: 16px;
+  padding: 0 8px;
 }
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -410,6 +413,32 @@ label {
 }
 .empty-state p {
   font-size: 0.9rem;
+}
+.personal-2026 {
+  background: rgba(176,125,98,0.06);
+  border: 2px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.personal-2026 .p-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+.personal-2026 .p-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+.personal-2026 .p-sub {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+.personal-2026 .p-text {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+  text-align: left;
 }
 ::-webkit-scrollbar { width: 0; background: transparent; }
 @media (min-width: 431px) {
@@ -606,7 +635,6 @@ label {
       <div style="text-align:center;margin-bottom:20px;">
         <div style="font-size:2.5rem;">🔥🐴</div>
         <div class="card-title" style="margin-top:8px;">Panorama da Semana</div>
-        <div class="card-sub">Ano do Cavalo de Fogo · 2026</div>
       </div>
       <div class="result-text" id="weeklyContent"></div>
       <div class="lucky-row" style="margin-top:20px;">
@@ -648,6 +676,17 @@ label {
       <h2 style="font-family:var(--font-serif);font-size:1.3rem;">2026 — Ano do Cavalo de Fogo</h2>
       <p style="font-size:0.85rem;color:var(--text-light);">Como cada signo dança com essa energia</p>
     </div>
+    <div id="personal2026" style="display:none;">
+      <div class="personal-2026">
+        <div class="p-emoji" id="p2026Emoji"></div>
+        <div class="p-title" id="p2026Title"></div>
+        <div class="p-sub" id="p2026Sub"></div>
+        <div class="p-text" id="p2026Text"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnPersonal2026" onclick="showPersonal2026()" style="margin-bottom:20px;">
+      🔮 Ver minha previsão para 2026
+    </button>
     <div id="zodiac2026List"></div>
   </div>
 
@@ -789,21 +828,104 @@ const zodiac2026 = [
   { animal: "Galo", emoji: "🐓", text: "O Galo gosta de ordem, e 2026 é caos organizado. Sua habilidade de estruturar será demandada — mas não tente controlar o incontrolável." },
   { animal: "Cão", emoji: "🐕", text: "O Cão protege o que ama. Em 2026, a pergunta é: o que você está protegendo que já não precisa mais de proteção? Solte para crescer." },
   { animal: "Porco", emoji: "🐖", text: "O Porco flui, o Cavalo arde. 2026 pede que você encontre raízes sem perder sua generosidade. Sonhos grandes precisam de fundação." }
-];
-
-const compatData = {
-  "Rato": { "Rato":"Almas que se espelham. A competição é o risco.","Boi":"Alma gêmea prática. Um enxerga, o outro constrói.","Tigre":"Atração magnética, mas choque de egos.","Coelho":"Tensão velada. O Rato é rápido demais.","Dragão":"Parceria poderosa. O Rato planeja, o Dragão brilha.","Serpente":"Intelectual e profundo. Desconfiança mútua inicial.","Cavalo":"Mundo oposto. Um foge quando o outro chega.","Cabra":"Tensão sutil. O Rato é pragmático demais.","Macaco":"Aliança criativa. Juntos inventam o impossível.","Galo":"Fricção constante. Ambos querem controle.","Cão":"Diferença de ritmo. O Cão é leal, o Rato é estrategista.","Porco":"Harmonia inesperada. O Porco acalma o Rato." },
-  "Boi": { "Rato":"Alma gêmea prática. Um constrói, o outro enxerga.","Boi":"Dupla força ou dupla teimosia.","Tigre":"Conflito de naturezas. O Tigre quer mudar, o Boi quer firmar.","Coelho":"Conforto mútuo. Ambos valorizam segurança.","Dragão":"Tensão criativa. O Boi ancora o Dragão.","Serpente":"Profundidade e lealdade. Conexão duradoura.","Cavalo":"Mundos opostos. O Cavalo foge, o Boi fica.","Cabra":"Acolhimento. O Boi protege, a Cabra cria.","Macaco":"Desconfiança. O Macaco é rápido demais.","Galo":"Respeito mútuo. Ambos valorizam ordem.","Cão":"Amizade sólida. Lealdade compartilhada.","Porco":"Harmonia tranquila. Ambos gostam de conforto." },
-  "Tigre": { "Rato":"Atração e competição. Quem lidera?","Boi":"Choque de mundos. Mudança vs estabilidade.","Tigre":"Fogo dobrado. Paixão intensa ou destruição.","Coelho":"Proteção e ternura. O Tigre defende, o Coelho acalma.","Dragão":"Poder e ambição. Dupla imbatível ou explosiva.","Serpente":"Mistério e magnetismo. Desconfiança oculta.","Cavalo":"Energia em movimento. Aventura garantida.","Cabra":"O Tigre é bruto demais. A Cabra se machuca.","Macaco":"Jogo de inteligência. Quem engana quem?","Galo":"Conflito de egos. Ambos querem brilhar.","Cão":"Lealdade feroz. O Cão segue o Tigre.","Porco":"O Porco suaviza o Tigre. Equilíbrio possível." },
-  "Coelho": { "Rato":"Velocidade diferente. O Coelho sente-se apressado.","Boi":"Segurança compartilhada. Lar e conforto.","Tigre":"Proteção intensa. O Coelho se sente seguro.","Coelho":"Sensibilidade dobrada. Muito conforto, pouca ação.","Dragão":"Atração e medo. O Dragão é intenso demais.","Serpente":"Intuição mútua. Silêncios compreendidos.","Cavalo":"Diferente demais. O Cavalo assusta o Coelho.","Cabra":"Alma gêmea artística. Criam beleza juntos.","Macaco":"O Macaco é imprevisível. O Coelho se desgasta.","Galo":"Tensão. O Galo critica, o Coelho se ofende.","Cão":"Carinho e proteção. Harmonia gentil.","Porco":"Ternura dobrada. Lar acolhedor garantido." },
-  "Dragão": { "Rato":"Parceria de poder. Estratégia + Brilho.","Boi":"Tensão produtiva. O Boi ancora o sonho.","Tigre":"Dupla de fogo. Grandeza ou explosão.","Coelho":"Intenso para o Coelho. Mas fascinante.","Dragão":"Dois sóis no mesmo céu. Brilho ou ofuscamento.","Serpente":"Sabedoria e ambição. Respeito profundo.","Cavalo":"Energia em alta. Movimento constante.","Cabra":"O Dragão é forte demais. A Cabra se retrai.","Macaco":"Aliança brilhante. Criam revoluções.","Galo":"Competição. Quem brilha mais?","Cão":"O Cão admira, mas se sente pequeno.","Porco":"O Porco acalma o fogo do Dragão." },
-  "Serpente": { "Rato":"Mente encontra mente. Estratégia pura.","Boi":"Profundidade e estabilidade. Tempo longo.","Tigre":"Magnetismo perigoso. Atração e desconfiança.","Coelho":"Intuição silenciosa. Compreensão sem palavras.","Dragão":"Ambição e sabedoria. Respeito mútuo.","Serpente":"Mistério dobrado. Ninguém entra, ninguém sai.","Cavalo":"Diferente demais. O Cavalo é externo, a Serpente interna.","Cabra":"Criatividade e sensibilidade. Arte e beleza.","Macaco":"Jogo mental. Inteligência em competição.","Galo":"Honestidade vs mistério. Fricção.","Cão":"O Cão é transparente, a Serpente é opaca.","Porco":"O Porco é ingênuo demais para a Serpente." },
-  "Cavalo": { "Rato":"Mundo oposto. Um foge, outro planeja.","Boi":"O Boi é lento demais. O Cavalo se impacienta.","Tigre":"Aventura e paixão. Energia sem limites.","Coelho":"O Cavalo assusta. O Coelho precisa de calma.","Dragão":"Movimento e brilho. Nunca parados.","Serpente":"Externo vs interno. Dificuldade de encontro.","Cavalo":"Dois ventos. Liberdade ou dispersão.","Cabra":"O Cavalo é brusco. A Cabra se machuca.","Macaco":"Diversão garantida. Mas pouca profundidade.","Galo":"Conflito de ritmo. Ambos querem liderar.","Cão":"O Cão segue, o Cavalo foge. Diferente demais.","Porco":"O Porco acalma o fogo do Cavalo." },
-  "Cabra": { "Rato":"Tensão sutil. O Rato é pragmático demais.","Boi":"Acolhimento. O Boi protege, a Cabra cria.","Tigre":"O Tigre é bruto demais. A Cabra se machuca.","Coelho":"Alma gêmea artística. Criam beleza juntos.","Dragão":"O Dragão é forte demais. A Cabra se retrai.","Serpente":"Criatividade e sensibilidade. Arte e beleza.","Cavalo":"O Cavalo é brusco. A Cabra se machuca.","Cabra":"Sensibilidade dobrada. Muita ternura, pouca ação.","Macaco":"O Macaco é imprevisível. A Cabra se desgasta.","Galo":"O Galo critica. A Cabra se ofende.","Cão":"Proteção gentil. O Cão cuida, a Cabra cria.","Porco":"Ternura dobrada. Lar acolhedor garantido." },
-  "Macaco": { "Rato":"Aliança criativa. Juntos inventam o impossível.","Boi":"Desconfiança. O Macaco é rápido demais.","Tigre":"Jogo de inteligência. Quem engana quem?","Coelho":"O Macaco é imprevisível. O Coelho se desgasta.","Dragão":"Aliança brilhante. Criam revoluções.","Serpente":"Jogo mental. Inteligência em competição.","Cavalo":"Diversão garantida. Mas pouca profundidade.","Cabra":"O Macaco é imprevisível. A Cabra se desgasta.","Macaco":"Diversão dobrada. Mas quem segura a barra?","Galo":"Conflito. O Galo quer ordem, o Macaco caos.","Cão":"Diferente demais. O Cão é sério, o Macaco brinca.","Porco":"O Porco é ingênuo demais para o Macaco." },
-  "Galo": { "Rato":"Fricção constante. Ambos querem controle.","Boi":"Respeito mútuo. Ambos valorizam ordem.","Tigre":"Conflito de egos. Ambos querem brilhar.","Coelho":"Tensão. O Galo critica, o Coelho se ofende.","Dragão":"Competição. Quem brilha mais?","Serpente":"Honestidade vs mistério. Fricção.","Cavalo":"Conflito de ritmo. Ambos querem liderar.","Cabra":"O Galo critica. A Cabra se ofende.","Macaco":"Conflito. O Galo quer ordem, o Macaco caos.","Galo":"Perfeccionismo dobrado. Ou respeito mútuo.","Cão":"Lealdade compartilhada. Mas o Galo critica.","Porco":"O Porco é relaxado demais para o Galo." },
-  "Cão": { "Rato":"Diferença de ritmo. O Cão é leal, o Rato é estrategista.","Boi":"Amizade sólida. Lealdade compartilhada.","Tigre":"Lealdade feroz. O Cão segue o Tigre.","Coelho":"Carinho e proteção. Harmonia gentil.","Dragão":"O Cão admira, mas se sente pequeno.","Serpente":"O Cão é transparente, a Serpente é opaca.","Cavalo":"O Cão segue, o Cavalo foge. Diferente demais.","Cabra":"Proteção gentil. O Cão cuida, a Cabra cria.","Macaco":"Diferente demais. O Cão é sério, o Macaco brinca.","Galo":"Lealdade compartilhada. Mas o Galo critica.","Cão":"Lealdade dobrada. Ou ciúme mútuo.","Porco":"Harmonia tranquila. Ambos valorizam o lar." },
-  "Porco": { "Rato":"Harmonia inesperada. O Porco acalma o Rato.","Boi":"Harmonia tranquila. Ambos gostam de conforto.","Tigre":"O Porco suaviza o Tigre. Equilíbrio possível.","Coelho":"Ternura dobrada. Lar acolhedor garantido.","Dragão":"O Porco acalma o fogo do Dragão.","Serpente":"O Porco é ingênuo demais para a Serpente.","Cavalo":"O Porco acalma o fogo do Cavalo.","Cabra":"Ternura dobrada. Lar acolhedor garantido.","Macaco":"O Porco é ingênuo demais para o Macaco.","Galo":"O Porco é relaxado demais para o Galo.","Cão":"Harmonia tranquila. Ambos valorizam o lar.","Porco":"Generosidade dobrada. Ou excessos juntos." }
+];const personal2026Data = {
+  "Rato": {
+    madeira: { yang: "Sua visão aguçada encontra terreno fértil em 2026. O Fogo do Cavalo acelera oportunidades que você já enxergava há tempos. A madeira yang é expansiva — mas cuidado para não se perder em tantos galhos. Foque no que realmente brota.", yin: "A observação silenciosa do Rato de Madeira Yin será sua maior aliada. Enquanto todos correm, você colhe informações. Em 2026, a paciência para esperar o momento certo vale mais que a pressa de agir primeiro." },
+    fogo: { yang: "Dois fogos se encontram — o seu e o do ano. Sua energia natural de visão e adaptação ganha velocidade, mas também risco de queimar antes da hora. 2026 pede que você canalize o fogo, não que se deixe consumir por ele.", yin: "O fogo yin do Rato encontra o fogo yang do Cavalo. É uma dança de intensidades. Sua capacidade de adaptação será testada: onde você costuma recuar, o ano pede presença. Mas presença não é impulsividade." },
+    terra: { yang: "A estabilidade da Terra ancora sua visão inquieta. Em 2026, você terá ideias rápidas demais — a terra pede que você escolha uma e a cultive até o fim. O sucesso virá da persistência, não da quantidade.", yin: "A receptividade da Terra Yin equilibra sua mente acelerada. Este ano, o que você plantar com cuidado dará frutos duradouros. A pressa é inimiga da profundidade. Escolha menos, mas escolha bem." },
+    metal: { yang: "A precisão do Metal Yang encontra o caos do Fogo do Cavalo. 2026 será um ano de cortes necessários — relacionamentos, projetos, crenças. Confie na sua capacidade de enxergar o que não serve mais. O corte dói, mas libera.", yin: "A determinação silenciosa do Metal Yin é sua força oculta. Enquanto o mundo parece acelerar, você sabe exatamente o que precisa ser refinado. 2026 premia quem tem a coragem de simplificar." },
+    agua: { yang: "O fluxo da Água Yang carrega sua visão para longe. Em 2026, oportunidades virão de lugares inesperados — mas a água também pode dispersar. Ancore suas ideias em ações concretas, ou elas ficarão só no plano.", yin: "A sabedoria da Água Yin é profunda e silenciosa. Este ano, sua intuição estará mais aguçada que nunca. Confie no que sente, mas não deixe que a desconfiança paralise. O fluxo certo sempre encontra o caminho." }
+  },
+  "Boi": {
+    madeira: { yang: "A madeira yang brota sobre a terra do Boi. Em 2026, sua constância será desafiada por novos projetos que pedem para sair do chão. A pergunta não é se você consegue — é se está disposto a começar algo novo sem ter todo o mapa.", yin: "A madeira yin cresce em silêncio, como você. Este ano, o crescimento virá de dentro para fora. O que parece lentidão é, na verdade, enraizamento. Não se compare com quem brota rápido — sua força está na profundidade." },
+    fogo: { yang: "O fogo yang sobre a terra do Boi cria argila — transformação. 2026 queima o que está rígido demais. Você pode sentir que suas estruturas estão sendo testadas. Deixe que o calor modele, não destrua. A flexão não é quebra.", yin: "O fogo yin é brasa, não chama. Sua paciência ancestral encontra o calor sutil do ano. A transformação acontece nos bastidores, longe dos olhos. Confie que o trabalho interno está sendo feito, mesmo sem evidências externas." },
+    terra: { yang: "Terra sobre terra — 2026 é um ano de consolidação. O Boi de Terra Yang constrói com visibilidade. Suas bases estão firmes, mas o ano pede que você olhe para cima: o que você construiu está pronto para receber luz?", yin: "A dupla terra cria uma montanha. Você é mais sólido do que imagina. Em 2026, a tentação será buscar novidade, mas sua verdadeira força está em fortalecer o que já existe. Nutrir é também crescer." },
+    metal: { yang: "O metal yang sobre a terra do Boi extrai o que há de precioso. Este ano, você será chamado a definir limites claros. Sua lealdade é um dom — mas quando se torna escravidão? O corte preciso liberta tanto quanto constrói.", yin: "O metal yin refina com paciência. 2026 pede que você polie aspectos da sua vida que ficaram ásperos com o tempo. Não é sobre mudar tudo — é sobre aprimorar o que já funciona. A excelência está nos detalhes." },
+    agua: { yang: "A água yang nutre a terra do Boi. Em 2026, você será lembrado de que constância sem fluidez vira rigidez. Permita-se ser molhado por novas ideias, novas pessoas, novos caminhos. A água não quebra a pedra — a transforma.", yin: "A água yin penetra silenciosamente. Este ano, mudanças profundas acontecerão sem alarde. Você pode acordar em dezembro e perceber que está em outro lugar interior. Confie no processo lento e profundo." }
+  },
+  "Tigre": {
+    madeira: { yang: "Madeira yang sobre o fogo do Tigre — duas energias de expansão. 2026 amplifica sua coragem natural, mas também seu risco de se espalhar. A pergunta do ano é: qual montanha você realmente quer escalar? Escolha um pico.", yin: "A madeira yin traz flexibilidade à sua força. Em 2026, você descobrirá que coragem não é só ataque — é também saber quando dobrar sem quebrar. A árvore que se curta ao vento resiste à tempestade." },
+    fogo: { yang: "Fogo sobre fogo — 2026 é seu elemento em dobro. Sua paixão e magnetismo estarão no auge, mas o risco de exaustão é real. O fogo precisa de combustível. Cuide do seu — descanso não é fraqueza, é estratégia.", yin: "O fogo yin do Tigre é brasa profunda, não explosão. Este ano, sua intensidade será mais sutil, mas não menos poderosa. As pessoas sentirão sua presença mesmo quando você estiver em silêncio. Use isso com sabedoria." },
+    terra: { yang: "A terra yang sobre o fogo do Tigre cria estabilidade no meio da ação. 2026 pede que você transforme sua energia em estrutura. Projetos que antes eram só impulso agora podem virar fundação. É hora de firmar.", yin: "A terra yin acolhe o fogo. Este ano, você será convidado a encontrar um lar para sua inquietação — seja um lugar, uma pessoa, ou uma prática. O Tigre também precisa de terra sob as patas." },
+    metal: { yang: "O metal yang sobre o fogo do Tigre é uma espada sendo forjada. 2026 será um ano de definição: o que você realmente quer? Sua impulsividade encontra a precisão do metal. Corte o que distrai. Foque o que importa.", yin: "O metal yin traz clareza silenciosa. Sua intuição estará afiada este ano. Confie no que você percebe nos detalhes — o Tigre vê o campo todo, mas o metal yin vê o ponto exato." },
+    agua: { yang: "A água yang sobre o fogo do Tigre cria vapor — transformação invisível. Em 2026, muito do que você vive será difícil de explicar. Não tente. Algumas mudanças acontecem no plano do sentimento, não da lógica.", yin: "A água yin é profunda e misteriosa. Este ano, sua coragem será testada de formas inesperadas — não no ataque, mas na paciência de esperar. O Tigre que sabe esperar é mais perigoso que o que ataca cedo." }
+  },
+  "Coelho": {
+    madeira: { yang: "A madeira yang sobre o coelho cria um bosque. 2026 é um ano de crescimento natural — se você permitir. Sua tendência de buscar segurança pode conter o brotar. Arrisque-se a crescer para a luz, mesmo que a sombra pareça mais segura.", yin: "A madeira yin é broto tenro. Este ano, sua sensibilidade será sua maior guia. O que te machuca também te mostra onde seus limites estão. Crescer é, em parte, aprender a dizer não com gentileza." },
+    fogo: { yang: "O fogo yang sobre o coelho pode assustar. Em 2026, eventos externos parecerão maiores que sua capacidade de absorver. Mas o coelho tem uma sabedoria: sabe quando saltar. Confie nos seus instintos de fuga e aproximação.", yin: "O fogo yin é lareira, não incêndio. Este ano, o calor virá de perto — relacionamentos, família, intimidade. Sua sensibilidade será um presente para quem souber receber. Proteja-se de quem não valoriza." },
+    terra: { yang: "A terra yang sobre o coelho cria um jardim. 2026 é um ano para cultivar beleza ao seu redor. Sua necessidade de conforto não é futilidade — é inteligência. Crie ambientes que nutram sua alma sensível.", yin: "A terra yin é solo fértil. Este ano, o que você plantar em silêncio florescerá sem alarde. Não precisa mostrar para crescer. O coelho que cultiva a própria toca está construindo um mundo inteiro." },
+    metal: { yang: "O metal yang sobre o coelho é uma gaiola ou uma espada — depende do uso. Em 2026, você será desafiado a definir limites. Sua diplomacia é linda, mas quando ela se torna auto-negação? O metal ensina a dizer basta.", yin: "O metal yin refina com delicadeza. Este ano, pequenos ajustes farão grandes diferenças. Uma palavra a menos aqui, um silêncio a mais ali. A elegância do coelho está no detalhe." },
+    agua: { yang: "A água yang sobre o coelho é rio que corre. 2026 traz movimento — talvez mais do que você gostaria. Sua tendência de ficar pode ser testada. Mas a água também leva. Deixe-se flutuar um pouco.", yin: "A água yin é lago profundo. Este ano, sua introspecção será recompensada. O que você descobrir em seus silêncios terá mais valor que qualquer conversa. O coelho que medita enxerga além do bosque." }
+  },
+  "Dragão": {
+    madeira: { yang: "Madeira yang sobre o fogo do Dragão — floresta em chamas ou árvore que cresce no vulcão? Em 2026, sua ambição encontra combustível infinito. O risco não é falhar — é suceder em algo que não importa. Escolha sua montanha.", yin: "A madeira yin traza raízes ao seu fogo. Este ano, você descobrirá que criatividade sem estrutura é só fumaça. O Dragão que aprende a construir dura mais que o que apenas brilha. Enraize para voar mais alto." },
+    fogo: { yang: "Fogo sobre fogo — o Dragão de Fogo Yang em 2026 é pura potência. Você será visto, ouvido, notado. A pergunta é: o que você fará com essa visibilidade? Poder sem propósito consome o portador.", yin: "O fogo yin do Dragão é brasa sob cinzas. Este ano, sua força será mais sutil, mas não menos real. As pessoas sentirão sua presença sem você dizer uma palavra. Use esse magnetismo com responsabilidade." },
+    terra: { yang: "A terra yang sobre o fogo do Dragão cria cerâmica — algo belo e útil. 2026 pede que você transforme sonhos em estruturas. Sua visão precisa de pés no chão. O Dragão que constrói é mais temido que o que apenas sonha.", yin: "A terra yin é argila molhada. Este ano, você será convidado a modelar algo com paciência. O Dragão impaciente quebra a escultura antes da hora. Respire. O tempo da terra não é o tempo do fogo." },
+    metal: { yang: "O metal yang sobre o fogo do Dragão forja lâminas. 2026 é um ano de decisões definitivas. O que você cortar, cortará de verdade. Tenha certeza do que quer antes de brandir a espada. O Dragão sábio mede três vezes.", yin: "O metal yin traz precisão à sua expansão. Este ano, menos será mais. Um projeto bem feito vale mais que dez iniciados. Sua ambição encontra na restrição um aliado inesperado." },
+    agua: { yang: "A água yang sobre o fogo do Dragão cria névoa — misteriosa, inatingível. Em 2026, sua visão pode parecer confusa às vezes. Isso não é fraqueza, é transformação. O Dragão que atravessa a névoa enxerga o que outros não veem.", yin: "A água yin é poço profundo. Este ano, sua sabedoria virá de lugares inesperados — sonhos, intuições, encontros casuais. O Dragão que escuta a água aprende o que o fogo não pode ensinar." }
+  },
+  "Serpente": {
+    madeira: { yang: "A madeira yang sobre a serpente é videira que sobe. 2026 traz oportunidades de ascensão, mas também o risco de se perder na altura. Sua intuição sabe quando a subida é verdadeira e quando é fuga. Confie nela.", yin: "A madeira yin é broto que cresce na sombra. Este ano, seu desenvolvimento será silencioso. O que parece estagnação é, na verdade, acumulação. Quando você emergir, estará irreconhecível — para o bem." },
+    fogo: { yang: "O fogo yang sobre a serpente é transformação total. 2026 será um ano de renascimento. A pele que você deixar para trás pode doer, mas a nova pele brilha diferente. Não olhe tanto para trás que esqueça de seguir.", yin: "O fogo yin é brasa que aquece a trupe. Este ano, sua sabedoria será convidada a sair da toca. Você não precisa de holofotes — apenas de um círculo que valorize o que você sabe. Escolha bem com quem compartilha." },
+    terra: { yang: "A terra yang sobre a serpente é montanha que abriga. 2026 pede que você encontre um território. Sua natureza nômade precisa de um ponto de referência. Não é prisão — é base para explorar mais longe.", yin: "A terra yin é gruta profunda. Este ano, sua introspecção será um refúgio para outros também. O que você aprendeu sozinho pode ser compartilhado — mas só com quem merece. A serpente escolhe quem entra em sua toca." },
+    metal: { yang: "O metal yang sobre a serpente é escama de ouro. 2026 revela o valor do que você construiu em silêncio. Sua estratégia, sua paciência, sua visão — tudo isso será reconhecido. Mas o reconhecimento externo é consequência, não meta.", yin: "O metal yin é joia polida. Este ano, você será chamado a refinar sua expressão. O que você diz e como diz importa tanto quanto o que pensa. A serpente que comunica bem domina sem atacar." },
+    agua: { yang: "A água yang sobre a serpente é rio subterrâneo. 2026 traz fluxos invisíveis de oportunidade. Sua intuição estará mais aguçada que nunca. O que parece coincidência é, muitas vezes, a água te guiando. Siga o fluxo.", yin: "A água yin é nascente escondida. Este ano, sua sabedoria brotará de fontes inesperadas. Não force. A serpente que espera o momento certo não perde a presa — nem desperdiça veneno." }
+  },
+  "Cavalo": {
+    madeira: { yang: "Madeira yang sobre o cavalo é floresta que corre. 2026 é seu ano, e a madeira alimenta seu fogo. Mas cuidado: crescimento sem direção vira matagal. Poda é também amor. Escolha para onde galopar.", yin: "A madeira yin traz flexibilidade ao seu galope. Este ano, você descobrirá que mudar de direção não é fraqueza — é inteligência. O cavalo que lê o terreno chega mais longe que o que só corre rápido." },
+    fogo: { yang: "Fogo sobre fogo — 2026 é potência máxima. Seu ano, seu elemento, sua energia. Mas lembre-se: o cavalo que não para morre de exaustão. O fogo precisa de combustível, e o combustível é cuidado. Descanse para brilhar.", yin: "O fogo yin do Cavalo é brasa constante. Este ano, sua energia será mais sustentável que a dos outros. Enquanto todos explodem, você aquece. O calor constante cozinha o que o fogo rápido queima." },
+    terra: { yang: "A terra yang sobre o cavalo é campo aberto. 2026 traz espaço para correr, mas também a responsabilidade de escolher o caminho. A terra ancora seu impulso. Onde você quer chegar? Defina antes de galopar.", yin: "A terra yin é estabilidade silenciosa. Este ano, você será surpreendido pelo prazer de ficar. O cavalo que descobre o pasto não perde a liberdade — encontra um novo tipo de alegria." },
+    metal: { yang: "O metal yang sobre o cavalo é ferradura que protege. 2026 pede preparação. Seu impulso natural precisa de estrutura. O cavalo ferrado corre mais longe. Invista em bases antes de voar.", yin: "O metal yin é rédea delicada. Este ano, você aprenderá que controle não é só força — é também sutileza. O cavalo que responde ao toque leve é mais livre que o que precisa de freio." },
+    agua: { yang: "A água yang sobre o cavalo é rio que ele atravessa. 2026 traz emoções intensas — sua inquietação encontra profundidade. O cavalo que aprende a nadar não teme a maré. Mergulhe.", yin: "A água yin é lago tranquilo. Este ano, sua inquietação encontrará um espelho. Pela primeira vez em muito tempo, você pode gostar do que vê. O cavalo que se reconhece galopa com mais propósito." }
+  },
+  "Cabra": {
+    madeira: { yang: "A madeira yang sobre a cabra é floresta que acolhe. 2026 traz oportunidades de crescimento criativo. Sua sensibilidade encontrará materiais para esculpir. Mas escolha um projeto — a madeira que tenta ser tudo vira lenha.", yin: "A madeira yin é musgo que cresce na pedra. Este ano, seu desenvolvimento será quase imperceptível. Mas quando olhar para trás, verá que cobriu tanto terreno. A cabra paciente alcança o topo." },
+    fogo: { yang: "O fogo yang sobre a cabra pode assustar. 2026 será intenso para sua sensibilidade. Mas o fogo também ilumina o que você criou. Sua arte — seja qual for — precisa ser vista. O medo de exposição é o último casulo.", yin: "O fogo yin é vela, não fogueira. Este ano, sua luz será convidada, não imposta. As pessoas se sentirão atraídas pela sua suavidade. Não tente brilhar mais — você já brilha o suficiente." },
+    terra: { yang: "A terra yang sobre a cabra é colina florida. 2026 é um ano de beleza material. Crie conforto ao seu redor — não é superficialidade, é autocuidado. A cabra que se nutre tem mais para dar.", yin: "A terra yin é toca confortável. Este ano, seu lar — físico ou emocional — será seu maior recurso. Invista nele. A cabra que tem onde voltar se aventura mais corajosamente." },
+    metal: { yang: "O metal yang sobre a cabra é sino que toca. 2026 pede que você se faça ouvir. Sua voz, sua arte, sua opinião — tudo isso tem valor. O metal dá forma ao que antes era só sentimento. Expresse-se.", yin: "O metal yin é instrumento delicado. Este ano, sua expressão encontrará tons mais sutis. Você não precisa gritar para ser ouvido. A cabra que sussurra bem é mais poderosa que a que berra." },
+    agua: { yang: "A água yang sobre a cabra é cachoeira. 2026 traz emoções em movimento — sua sensibilidade será um rio, não um lago. Isso pode cansar. Aprenda a navegar, não só a flutuar. A correnteza é professora.", yin: "A água yin é poço sereno. Este ano, sua profundidade emocional será um presente para quem souber mergulhar. Não se desculpe por ser intensa. A cabra que sente profundamente ama profundamente." }
+  },
+  "Macaco": {
+    madeira: { yang: "Madeira yang sobre o macaco é floresta de brincadeiras. 2026 traz oportunidades criativas demais — e o risco de dispersão. Sua inteligência precisa de um galho principal. Escolha um e balance.", yin: "A madeira yin é cipó que se enrola. Este ano, sua versatilidade será sua maior aliada. Você não precisa escolher um só caminho — mas precisa de um eixo. O macaco que gira em torno de um centro não cai." },
+    fogo: { yang: "O fogo yang sobre o macaco é fogueira de festa. 2026 será divertido, intenso, movimentado. Mas diversão sem direção vira fumaça. O macaco que aprende a canalizar a energia social constrói redes duradouras.", yin: "O fogo yin é brasa que aquece a trupe. Este ano, sua liderança será mais sutil. Você não precisa ser o centro — ser o conector é mais poderoso. O macaco que une outros é mais sábio que o que só performa." },
+    terra: { yang: "A terra yang sobre o macaco é terra firme sob os pés. 2026 pede que você transforme ideias em algo palpável. Sua mente rápida precisa de um corpo lento — um projeto, um hábito, uma rotina. Construa.", yin: "A terra yin é jardim secreto. Este ano, você descobrirá prazer em cultivar algo privado. Nem tudo precisa ser compartilhado. O macaco que guarda um tesouro tem onde voltar quando a festa acaba." },
+    metal: { yang: "O metal yang sobre o macaco é ferramenta que corta. 2026 será um ano de decisões rápidas — mas decisões, não impulsos. Sua inteligência precisa de foco. O macaco que afia uma ferramenta usa mil vezes.", yin: "O metal yin é chave que abre portas. Este ano, pequenas habilidades farão grandes diferenças. O que você aprendeu de passagem pode ser o diferencial. O macaco curioso sempre acha um atalho." },
+    agua: { yang: "A água yang sobre o macaco é rio de ideias. 2026 traz um fluxo mental intenso — talvez demais. Aprenda a filtrar. Nem toda ideia precisa ser executada. O macaco que escolhe bem nada menos e chega mais longe.", yin: "A água yin é poço de sabedoria. Este ano, sua intuição social estará aguçada. Você lerá as pessoas como nunca. Use isso para proteger, não para manipular. O macaco sábio é leal à trupe." }
+  },
+  "Galo": {
+    madeira: { yang: "A madeira yang sobre o galo é galho que sobe. 2026 traz oportunidades de crescimento visível. Sua organização encontrará terreno fértil. Mas cuidado: crescer rápido demais pode deixar raízes fracas. Firme cada degrau.", yin: "A madeira yin é broto que cresce na direção certa. Este ano, sua intuição de ordem será um presente. Você saberá exatamente onde colocar cada peça. Confie nessa habilidade — é rara." },
+    fogo: { yang: "O fogo yang sobre o galo é sol que nasce. 2026 amplifica sua necessidade de ser visto. E você será. Mas visibilidade sem substância vira performance vazia. O galo que canta de manhã tem algo a dizer — não só voz.", yin: "O fogo yin é luz de velas. Este ano, sua presença será mais íntima, mas não menos impactante. O galo que ilumina um cômodo pequeno transforma mais vidas que o que grita no telhado." },
+    terra: { yang: "A terra yang sobre o galo é quintal bem cuidado. 2026 premia quem organiza. Sua habilidade de estruturar será demandada — e recompensada. O galo que cuida do terreno colhe os grãos.", yin: "A terra yin é celeiro que guarda. Este ano, você será lembrado de que economizar não é mesquinhez — é previsão. O galo que guarda para o inverno canta mais alto na primavera." },
+    metal: { yang: "O metal yang sobre o galo é galo de ferro — ou espada. 2026 pede precisão. Sua crítica natural precisa ser direcionada para dentro antes de sair. O galo que se polide primeiro brilha mais.", yin: "O metal yin é relógio que marca. Este ano, seu senso de timing será crucial. Saber quando falar, quando calar, quando agir, quando esperar. O galo que domina o tempo domina o dia." },
+    agua: { yang: "A água yang sobre o galo é chuva que lava. 2026 traz uma limpeza necessária. Sua tendência de acumular responsabilidades será testada. O galo que aprende a delegar canta melhor.", yin: "A água yin é orvalho que refresca. Este ano, sua rigidez encontrará suavidade. Você não precisa estar certo sempre. O galo que admite erro ganha respeito real — não apenas obediência." }
+  },
+  "Cão": {
+    madeira: { yang: "A madeira yang sobre o cão é árvore que oferece sombra. 2026 traz oportunidades de proteção — mas proteção de quem? O cão que late para todos se cansa. Escolha seu território e guarde com amor.", yin: "A madeira yin é raiz que segura. Este ano, sua lealdade encontrará um objeto digno. O cão que escolhe bem a quem segue não é submisso — é sábio. Confie no seu faro." },
+    fogo: { yang: "O fogo yang sobre o cão é lareira que aquece. 2026 traz calor aos seus relacionamentos. Sua lealdade será reconhecida — mas só se você permitir. O cão que fica na porta não recebe carinho. Entre.", yin: "O fogo yin é brasa que dura. Este ano, sua presença será um porto para muitos. Mas cuidado: o cão que salva todos pode se afogar. Deixe que outros também te aqueçam." },
+    terra: { yang: "A terra yang sobre o cão é terra natal. 2026 é um ano de pertencimento. Onde quer que você esteja, criará raízes. O cão que encontra seu lugar não precisa mais vagar.", yin: "A terra yin é toca confortável. Este ano, seu lar será seu maior recurso — seja ele físico, emocional, ou espiritual. Invista nele. O cão que tem onde descansar protege melhor." },
+    metal: { yang: "O metal yang sobre o cão é coleira ou escudo — você escolhe. 2026 pede limites claros. Sua lealdade sem fronteira vira escravidão. O cão que rosna quando necessário é mais respeitado.", yin: "O metal yin é sino que avisa. Este ano, sua intuição de perigo estará afiada. Confie nela. O cão que late para o estranho não é mal-educado — é protetor." },
+    agua: { yang: "A água yang sobre o cão é rio que ele atravessa. 2026 traz mudanças emocionais — talvez deixar algo para trás. O cão que chora a partida não é fraco — é grato pelo que viveu. Siga.", yin: "A água yin é poço que acalma. Este ano, sua ansiedade encontrará um remédio inesperado — talvez água, talvez silêncio, talvez um novo ritmo. O cão que bebe quando tem sede não se cansa." }
+  },
+  "Porco": {
+    madeira: { yang: "A madeira yang sobre o porco é árvore frondosa. 2026 traz abundância — mas abundância sem raiz vira peso. O porco que aprende a sustentar o que tem desfruta mais. Cresça com consciência.", yin: "A madeira yin é semente que germina. Este ano, seus sonhos mais generosos encontrarão solo. Mas germinação leva tempo. O porco paciente colhe o dobro do que apressado." },
+    fogo: { yang: "O fogo yang sobre o porco é cozinha que alimenta. 2026 amplifica sua generosidade. Você será chamado a dar — tempo, atenção, recursos. Mas o porco que esvazia o celeiro morre de fome. Doe com sabedoria.", yin: "O fogo yin é lareira de encontro. Este ano, seu calor será um ímã. As pessoas sentirão-se seguras perto de você. Mas lembre-se: o porco também precisa de abraço. Permita-se receber." },
+    terra: { yang: "A terra yang sobre o porco é horta generosa. 2026 é um ano de colheita para o que você plantou com o coração. Mas a terra pede trabalho. O porco que cultiva come melhor que o que só espera.", yin: "A terra yin é cozinha de avó. Este ano, sua habilidade de criar conforto será um superpoder. Não subestime o valor de um prato quente, um ouvido atento, um abraço demorado. Você cura sem saber." },
+    metal: { yang: "O metal yang sobre o porco é moeda que vale. 2026 pede que você valorize o que tem — incluindo a si mesmo. Sua generosidade pode mascarar uma crença de não-merecimento. O porco que se valoriza dá melhor.", yin: "O metal yin é joia herdada. Este ano, você descobrirá valor em lugares esquecidos — talentos antigos, amizades antigas, sonhos deixados de lado. O porco que revira o celeiro acha ouro." },
+    agua: { yang: "A água yang sobre o porco é rio generoso. 2026 traz fluxo emocional intenso — você sentirá mais, dará mais, receberá mais. Mas rios também inundam. Aprenda a canalizar. O porco que constrói diques protege a aldeia.", yin: "A água yin é nascente pura. Este ano, sua otimismo encontrará uma fonte inesgotável em você mesmo. O mundo pode ser duro, mas o porco que bebe de sua própria fonte nunca seca." }
+  }
+};const compatData = {
+  "Rato": { "Rato":"Almas que se espelham. A competição é o risco. Ambos enxergam oportunidades onde outros não veem — mas quem lidera quando dois líderes dividem o mesmo espaço?","Boi":"Alma gêmea prática. Um enxerga, o outro constrói. O Rato traz visão, o Boi traz constância. Juntos, transformam ideias em realidade.","Tigre":"Atração magnética, mas choque de egos. O Rato planeja, o Tigre ataca. Se aprenderem a respeitar os tempos um do outro, formam uma dupla imbatível.","Coelho":"Tensão velada. O Rato é rápido demais para o ritmo do Coelho. Mas se o Rato aprender a esperar, descobrirá uma profundidade que a velocidade não alcança.","Dragão":"Parceria poderosa. O Rato planeja, o Dragão brilha. Juntos, dominam qualquer cenário. O risco? Ambos querem o controle.","Serpente":"Intelectual e profundo. Desconfiança mútua inicial, mas quando superada, cria uma aliança estratégica de longo prazo.","Cavalo":"Mundo oposto. Um foge quando o outro chega. O Rato precisa de detalhes, o Cavalo de liberdade. Difícil, mas não impossível.","Cabra":"Tensão sutil. O Rato é pragmático demais para a sensibilidade da Cabra. Mas a Cabra ensina ao Rato que nem tudo precisa ter utilidade imediata.","Macaco":"Aliança criativa. Juntos inventam o impossível. Dois cérebros em sintonia podem mudar o mundo — ou causar caos controlado.","Galo":"Fricção constante. Ambos querem controle, mas de formas diferentes. O Galo quer ordem, o Rato quer oportunidade. Negociem.","Cão":"Diferença de ritmo. O Cão é leal, o Rato é estrategista. O Cão pode se sentir usado; o Rato, sufocado. Clareza é essencial.","Porco":"Harmonia inesperada. O Porco acalma o Rato. A generosidade do Porco ensina ao Rato que nem toda troca precisa ser calculada." },
+  "Boi": { "Rato":"Alma gêmea prática. Um constrói, o outro enxerga. O Boi ancora o Rato, o Rato expande o Boi. Parceria de longa data.","Boi":"Dupla força ou dupla teimosia. Dois Bois juntos são inabaláveis — mas se discordarem, ninguém cede. Aprendam a flexionar.","Tigre":"Conflito de naturezas. O Tigre quer mudar, o Boi quer firmar. Mas o Tigre precisa de base, e o Boi precisa de movimento. Complementam-se na diferença.","Coelho":"Conforto mútuo. Ambos valorizam segurança e beleza. O Boi constrói o lar, o Coelho o enche de ternura. Harmonia natural.","Dragão":"Tensão criativa. O Boi ancora o sonho do Dragão. Sem o Boi, o Dragão voa para lugar nenhum. Sem o Dragão, o Boi não sonha.","Serpente":"Profundidade e lealdade. Conexão duradoura. O Boi oferece estabilidade, a Serpente oferece mistério. Juntos, têm o melhor dos dois mundos.","Cavalo":"Mundos opostos. O Cavalo foge, o Boi fica. Mas o Cavalo volta para onde se sente seguro — e o Boi é segurança pura.","Cabra":"Acolhimento. O Boi protege, a Cabra cria. O Boi oferece estrutura, a Cabra oferece beleza. Lar perfeito.","Macaco":"Desconfiança. O Macaco é rápido demais para o gosto do Boi. Mas se o Boi aprender a rir das travessuras, descobrirá alegria.","Galo":"Respeito mútuo. Ambos valorizam ordem e honestidade. Juntos, constroem algo sólido e duradouro. Parceria de trabalho excelente.","Cão":"Amizade sólida. Lealdade compartilhada. Dois protetores naturais. O Boi oferece estabilidade, o Cão oferece vigilância.","Porco":"Harmonia tranquila. Ambos gostam de conforto e prazeres simples. Juntos, criam um lar acolhedor e generoso." },
+  "Tigre": { "Rato":"Atração e competição. Quem lidera? O Tigre tem carisma, o Rato tem estratégia. Se dividirem o poder, dominam. Se lutarem pelo poder, destroem-se.","Boi":"Choque de mundos. Mudança vs estabilidade. O Tigre empurra, o Boi resiste. Mas o Boi ensina paciência ao Tigre, e o Tigre ensina coragem ao Boi.","Tigre":"Fogo dobrado. Paixão intensa ou destruição. Dois Tigres juntos são uma força da natureza — mas precisam de espaço próprio para não se devorarem.","Coelho":"Proteção e ternura. O Tigre defende, o Coelho acalma. O Tigre aprende suavidade; o Coelho aprende coragem. Troca justa.","Dragão":"Poder e ambição. Dupla imbatível ou explosiva. Dois líderes naturais. Se alinharem objetivos, ninguém os para. Se não, guerra.","Serpente":"Mistério e magnetismo. Desconfiança oculta. Ambos são estrategistas, mas o Tigre é aberto e a Serpente é reservada. Jogo de espelhos.","Cavalo":"Energia em movimento. Aventura garantida. Dois espíritos livres que correm juntos. O risco? Nenhum dos dois quer parar para descansar.","Cabra":"O Tigre é bruto demais. A Cabra se machuca. Mas se o Tigre aprender a tocar com gentileza, a Cabra oferece uma ternura que ele não encontra em lugar nenhum.","Macaco":"Jogo de inteligência. Quem engana quem? O Tigre é direto, o Macaco é indireto. Se respeitarem as diferenças, diversão garantida.","Galo":"Conflito de egos. Ambos querem brilhar. O Galo critica, o Tigre ataca. Mas ambos admiram coragem — e isso pode ser ponto de partida.","Cão":"Lealdade feroz. O Cão segue o Tigre. Mas o Tigre precisa merecer essa lealdade. O Cão que escolhe mal se machuca.","Porco":"O Porco suaviza o Tigre. Equilíbrio possível. A generosidade do Porco desarma a agressividade do Tigre. Amizade improvável, mas real." },
+  "Coelho": { "Rato":"Velocidade diferente. O Coelho sente-se apressado pelo Rato. Mas o Rato ensina eficiência, e o Coelho ensina presença. Encontrem o ritmo intermediário.","Boi":"Segurança compartilhada. Lar e conforto. O Boi constrói, o Coelho decora. Ambos valorizam a paz. Relacionamento de longa duração.","Tigre":"Proteção intensa. O Coelho se sente seguro com o Tigre. Mas cuidado: segurança pode virar dependência. O Coelho precisa manter sua voz.","Coelho":"Sensibilidade dobrada. Muito conforto, pouca ação. Dois Coelhos juntos criam um ninho perfeito — mas podem se isolar do mundo. Abram as janelas.","Dragão":"Atração e medo. O Dragão é intenso demais para o Coelho. Mas o Dragão também admira a delicadeza do Coelho. Se o Dragão suavizar, nasce algo lindo.","Serpente":"Intuição mútua. Silêncios compreendidos. Ambos leem entre linhas. Conversas que não precisam de palavras. Conexão profunda.","Cavalo":"Diferente demais. O Cavalo assusta o Coelho com sua intensidade. Mas o Cavalo também traz coragem. O Coelho pode aprender a saltar mais longe.","Cabra":"Alma gêmea artística. Criam beleza juntos. Dois sensíveis que se entendem sem explicação. Harmonia rara e preciosa.","Macaco":"O Macaco é imprevisível. O Coelho se desgasta. Mas o Macaco traz alegria que o Coelho precisa. Limites saudáveis são essenciais.","Galo":"Tensão. O Galo critica, o Coelho se ofende. O Galo é direto demais para a sensibilidade do Coelho. Mas ambos valorizam beleza — comecem por aí.","Cão":"Carinho e proteção. Harmonia gentil. O Cão cuida, o Coelho acolhe. Relacionamento tranquilo e nutritivo.","Porco":"Ternura dobrada. Lar acolhedor garantido. Dois generosos que amam cuidar do outro. Cuidado para não esquecer de cuidar de si." },
+  "Dragão": { "Rato":"Parceria de poder. Estratégia + Brilho. O Rato planeja, o Dragão executa. Juntos, são uma máquina de realizar. Negócios excelentes.","Boi":"Tensão produtiva. O Boi ancora o sonho. O Dragão voa alto, o Boi segura a corda. Sem o Boi, o Dragão cai. Sem o Dragão, o Boi não voa.","Tigre":"Dupla de fogo. Grandeza ou explosão. Dois líderes, duas chamas. Se respeitarem, iluminam o mundo. Se competirem, queimam tudo.","Coelho":"Intenso para o Coelho. Mas fascinante. O Dragão admira a delicadeza do Coelho. O Coelho admira a coragem do Dragão. Aprendizado mútuo.","Dragão":"Dois sóis no mesmo céu. Brilho ou ofuscamento. Dois Dragões juntos são espetaculares — mas precisam de espaço próprio. Não competam, brilhem juntos.","Serpente":"Sabedoria e ambição. Respeito profundo. A Serpente entende a profundidade do Dragão. O Dragão protege a Serpente como poucos. Aliança poderosa.","Cavalo":"Energia em alta. Movimento constante. Nunca parados, sempre em ação. O risco? Exaustão mútua. Aprendam a descansar juntos.","Cabra":"O Dragão é forte demais. A Cabra se retrai. Mas o Dragão pode aprender a suavizar, e a Cabra pode aprender a se firmar. Crescimento para ambos.","Macaco":"Aliança brilhante. Criam revoluções. Dois visionários que não aceitam o status quo. Juntos, mudam o mundo — ou pelo menos tentam.","Galo":"Competição. Quem brilha mais? Ambos querem reconhecimento. Se dividirem o palco, o espetáculo é maior. Se não, ofuscamento.","Cão":"O Cão admira, mas se sente pequeno. O Dragão precisa reconhecer o Cão, ou ele se afasta. Lealdade precisa ser cultivada.","Porco":"O Porco acalma o fogo do Dragão. A generosidade do Porco ensina ao Dragão que poder sem ternura é tirania." },
+  "Serpente": { "Rato":"Mente encontra mente. Estratégia pura. Dois cérebros em sintonia. Jogam xadrez enquanto outros jogam damas. Respeito intelectual.","Boi":"Profundidade e estabilidade. Tempo longo. O Boi oferece segurança, a Serpente oferece mistério. Relacionamento que melhora com o tempo.","Tigre":"Magnetismo perigoso. Atração e desconfiança. O Tigre é aberto, a Serpente é reservada. Fogo e veneno. Paixão intensa, mas instável.","Coelho":"Intuição silenciosa. Compreensão sem palavras. Ambos leem o ambiente. Silêncios confortáveis. Conexão rara.","Dragão":"Ambição e sabedoria. Respeito mútuo. A Serpente entende o Dragão como poucos. O Dragão protege a Serpente como poucos. Parceria de poder.","Serpente":"Mistério dobrado. Ninguém entra, ninguém sai. Dois reservados juntos criam um mundo privado. Mas cuidado para não se isolar demais.","Cavalo":"Diferente demais. O Cavalo é externo, a Serpente interna. O Cavalo quer correr, a Serpente quer observar. Difícil, mas complementar se houver paciência.","Cabra":"Criatividade e sensibilidade. Arte e beleza. A Serpente estratégica e a Cabra artística criam obras de arte juntas. Inspiração mútua.","Macaco":"Jogo mental. Inteligência em competição. Ambos são estrategistas. Se cooperarem, são imbatíveis. Se competirem, ninguém ganha.","Galo":"Honestidade vs mistério. Fricção. O Galo quer clareza, a Serpente gosta de camadas. Comunicação é chave.","Cão":"O Cão é transparente, a Serpente é opaca. Desconfiança natural. Mas confiança construída dia a dia vira respeito profundo.","Porco":"O Porco é ingênuo demais para a Serpente. Mas a ingenuidade do Porco pode ensinar à Serpente que nem todo mundo tem segundas intenções." },
+  "Cavalo": { "Rato":"Mundo oposto. Um foge, outro planeja. O Cavalo quer liberdade, o Rato quer controle. Mas o Rato pode ajudar o Cavalo a encontrar direção.","Boi":"O Boi é lento demais. O Cavalo se impacienta. Mas o Boi ensina ao Cavalo que algumas coisas não podem ser apressadas. Lição difícil, mas valiosa.","Tigre":"Aventura e paixão. Energia sem limites. Dois espíritos livres que correm juntos. O mundo é pequeno demais para vocês. Vão longe.","Coelho":"O Cavalo assusta. O Coelho precisa de calma. Mas o Coelho pode ensinar ao Cavalo a beleza de ficar. E o Cavalo pode ensinar ao Coelho a coragem de ir.","Dragão":"Movimento e brilho. Nunca parados. Dois dinâmicos que se alimentam. O risco? Nenhum dos dois sabe parar. Alguém precisa ser o freio.","Serpente":"Externo vs interno. Dificuldade de encontro. O Cavalo quer ação, a Serpente quer reflexão. Mas se encontrarem no meio, aprendem muito.","Cavalo":"Dois ventos. Liberdade ou dispersão. Dois Cavalos juntos são uma tempestade bonita — mas precisam de um porto. Encontrem um juntos.","Cabra":"O Cavalo é brusco. A Cabra se machuca. Mas o Cavalo pode aprender a galopar mais suavemente. E a Cabra pode aprender a segurar as rédeas.","Macaco":"Diversão garantida. Mas pouca profundidade. Ótima amizade, relacionamento desafiador. O Macaco diverte, o Cavalo empolga. Festa eterna.","Galo":"Conflito de ritmo. Ambos querem liderar. O Galo quer ordem, o Cavalo quer liberdade. Negociem territórios.","Cão":"O Cão segue, o Cavalo foge. Diferente demais. Mas o Cão é leal — e o Cavalo volta para quem é leal. Tempo é essencial.","Porco":"O Porco acalma o fogo do Cavalo. A generosidade do Porco ensina ao Cavalo que parar não é perder tempo. Descanso é também velocidade." },
+  "Cabra": { "Rato":"Tensão sutil. O Rato é pragmático demais. Mas o Rato pode ajudar a Cabra a concretizar sonhos. E a Cabra ensina ao Rato que beleza também é útil.","Boi":"Acolhimento. O Boi protege, a Cabra cria. O Boi oferece segurança, a Cabra oferece inspiração. Lar perfeito para crescer.","Tigre":"O Tigre é bruto demais. A Cabra se machuca. Mas se o Tigre aprender a suavizar, encontra na Cabra uma ternura que não sabia que precisava.","Coelho":"Alma gêmea artística. Criam beleza juntos. Dois sensíveis que se entendem no olhar. Harmonia natural e profunda.","Dragão":"O Dragão é forte demais. A Cabra se retrai. Mas o Dragão admira a arte da Cabra. Se o Dragão valorizar, a Cabra floresce.","Serpente":"Criatividade e sensibilidade. Arte e beleza. A Serpente traz profundidade, a Cabra traz forma. Obras de arte nascem dessa união.","Cavalo":"O Cavalo é brusco. A Cabra se machuca. Mas o Cavalo pode aprender a galopar mais suavemente. E a Cabra pode aprender a se firmar.","Cabra":"Sensibilidade dobrada. Muita ternura, pouca ação. Dois sonhadores juntos precisam de alguém prático — ou de uma lista de tarefas.","Macaco":"O Macaco é imprevisível. A Cabra se desgasta. Mas o Macaco traz alegria que a Cabra precisa. Limites saudáveis salvam essa relação.","Galo":"O Galo critica. A Cabra se ofende. O Galo é direto demais. Mas ambos valorizam beleza — comecem por aí.","Cão":"Proteção gentil. O Cão cuida, a Cabra cria. O Cão oferece segurança emocional que a Cabra precisa para florescer.","Porco":"Ternura dobrada. Lar acolhedor garantido. Dois generosos que amam cuidar. Cuidado para não esquecer de cuidar de si." },
+  "Macaco": { "Rato":"Aliança criativa. Juntos inventam o impossível. Dois cérebros em sintonia. Negócios, arte, trapaças — tudo funciona.","Boi":"Desconfiança. O Macaco é rápido demais. Mas o Boi pode ensinar ao Macaco que constância também é inteligência. Troca justa.","Tigre":"Jogo de inteligência. Quem engana quem? Diversão garantida. Mas cuidado: o Tigre pode não gostar de ser enganado.","Coelho":"O Macaco é imprevisível. O Coelho se desgasta. Mas o Macaco traz alegria que o Coelho precisa. Limites salvam essa amizade.","Dragão":"Aliança brilhante. Criam revoluções. Dois visionários que não aceitam limites. Juntos, mudam o mundo — ou pelo menos causam caos divertido.","Serpente":"Jogo mental. Inteligência em competição. Ambos são estrategistas. Se cooperarem, imbatíveis. Se competirem, ninguém ganha.","Cavalo":"Diversão garantida. Mas pouca profundidade. Ótima amizade, relacionamento desafiador. Festa eterna, mas e depois da festa?","Cabra":"O Macaco é imprevisível. A Cabra se desgasta. Mas o Macaco admira a arte da Cabra. Se respeitar, encontra inspiração.","Macaco":"Diversão dobrada. Mas quem segura a barra? Dois brincalhões juntos precisam de alguém sério — ou de um projeto que valha a pena.","Galo":"Conflito. O Galo quer ordem, o Macaco caos. O Galo critica, o Macaco zomba. Mas se respeitarem, são uma dupla criativa eclética.","Cão":"Diferente demais. O Cão é sério, o Macaco brinca. Mas o Cão admira a leveza do Macaco. E o Macaco admira a lealdade do Cão.","Porco":"O Porco é ingênuo demais para o Macaco. Mas a ingenuidade do Porco pode ensinar ao Macaco que nem tudo é jogo." },
+  "Galo": { "Rato":"Fricção constante. Ambos querem controle. O Rato quer oportunidade, o Galo quer ordem. Negociem — ou lutem para sempre.","Boi":"Respeito mútuo. Ambos valorizam ordem. Parceria sólida de trabalho. Constroem algo duradouro com disciplina e honestidade.","Tigre":"Conflito de egos. Ambos querem brilhar. O Galo critica, o Tigre ataca. Mas ambos admiram coragem. Comecem por aí.","Coelho":"Tensão. O Galo critica, o Coelho se ofende. O Galo é direto demais. Mas o Coelho pode ensinar ao Galo que delicadeza também é honestidade.","Dragão":"Competição. Quem brilha mais? Ambos querem reconhecimento. Se dividirem o palco, o espetáculo é maior. Se não, ofuscamento.","Serpente":"Honestidade vs mistério. Fricção. O Galo quer clareza, a Serpente gosta de camadas. Comunicação é o desafio — e a solução.","Cavalo":"Conflito de ritmo. Ambos querem liderar. O Galo quer ordem, o Cavalo quer liberdade. Negociem territórios.","Cabra":"O Galo critica. A Cabra se ofende. Mas ambos valorizam beleza. Comecem por aí — e o Galo aprende a elogiar antes de sugerir.","Macaco":"Conflito. O Galo quer ordem, o Macaco caos. Mas juntos criam algo que ninguém mais criaria. Caos organizado é arte.","Galo":"Perfeccionismo dobrado. Ou respeito mútuo. Dois Galos juntos são impecáveis — ou insuportáveis. Depende da maturidade.","Cão":"Lealdade compartilhada. Mas o Galo critica. O Cão precisa de elogios, não só de correções. O Galo que aprende isso ganha um amigo para a vida.","Porco":"O Porco é relaxado demais para o Galo. Mas o Porco ensina ao Galo que perfeição não é tudo. Às vezes, bom é suficiente." },
+  "Cão": { "Rato":"Diferença de ritmo. O Cão é leal, o Rato é estrategista. O Cão pode se sentir usado. Clareza e honestidade salvam essa relação.","Boi":"Amizade sólida. Lealdade compartilhada. Dois protetores naturais. Juntos, são um bastião de confiança.","Tigre":"Lealdade feroz. O Cão segue o Tigre. Mas o Tigre precisa merecer essa lealdade. O Cão que escolhe mal se machuca.","Coelho":"Carinho e proteção. Harmonia gentil. O Cão cuida, o Coelho acolhe. Relacionamento tranquilo e nutritivo.","Dragão":"O Cão admira, mas se sente pequeno. O Dragão precisa reconhecer o Cão. Se o fizer, ganha um aliado incondicional.","Serpente":"O Cão é transparente, a Serpente é opaca. Desconfiança natural. Mas confiança construída dia a dia vira respeito profundo.","Cavalo":"O Cão segue, o Cavalo foge. Diferente demais. Mas o Cavalo volta para quem é leal. Tempo e paciência são essenciais.","Cabra":"Proteção gentil. O Cão cuida, a Cabra cria. O Cão oferece segurança emocional que a Cabra precisa.","Macaco":"Diferente demais. O Cão é sério, o Macaco brinca. Mas o Cão admira a leveza do Macaco. E o Macaco admira a lealdade do Cão.","Galo":"Lealdade compartilhada. Mas o Galo critica. O Cão precisa de afirmação. O Galo que elogia ganha um protetor.","Cão":"Lealdade dobrada. Ou ciúme mútuo. Dois Cães juntos são uma fortaleza — mas precisam confiar um no outro.","Porco":"Harmonia tranquila. Ambos valorizam o lar. Dois generosos que criam um espaço seguro. Amizade para a vida toda." },
+  "Porco": { "Rato":"Harmonia inesperada. O Porco acalma o Rato. A generosidade do Porco ensina ao Rato que nem toda troca precisa ser calculada.","Boi":"Harmonia tranquila. Ambos gostam de conforto. Juntos, criam um lar acolhedor e estável. Relacionamento sem turbulência.","Tigre":"O Porco suaviza o Tigre. Equilíbrio possível. A generosidade do Porco desarma a agressividade do Tigre. Amizade improvável, mas real.","Coelho":"Ternura dobrada. Lar acolhedor garantido. Dois generosos que amam cuidar. Cuidado para não esquecer de cuidar de si.","Dragão":"O Porco acalma o fogo do Dragão. A generosidade do Porco ensina ao Dragão que poder sem ternura é tirania.","Serpente":"O Porco é ingênuo demais para a Serpente. Mas a ingenuidade do Porco pode ensinar à Serpente que confiança também é força.","Cavalo":"O Porco acalma o fogo do Cavalo. A generosidade do Porco ensina ao Cavalo que parar não é perder tempo.","Cabra":"Ternura dobrada. Lar acolhedor garantido. Dois sensíveis que criam beleza juntos. Harmonia natural.","Macaco":"O Porco é ingênuo demais para o Macaco. Mas o Macaco admira a generosidade do Porco. Se respeitar, encontra lealdade rara.","Galo":"O Porco é relaxado demais para o Galo. Mas o Porco ensina ao Galo que perfeição não é tudo. Às vezes, bom é suficiente.","Cão":"Harmonia tranquila. Ambos valorizam o lar. Dois generosos que criam um espaço seguro. Amizade para a vida toda.","Porco":"Generosidade dobrada. Ou excessos juntos. Dois Porcos juntos precisam de alguém que diga 'chega' — ou de um orçamento." }
 };
 
 let user = JSON.parse(localStorage.getItem('ganzhia_user')) || null;
@@ -835,8 +957,6 @@ function getMoonPhase() {
   const year = now.getFullYear();
   const month = now.getMonth();
   const day = now.getDate();
-  const c = Math.floor((year - 1900) / 100);
-  const e = Math.floor((year - 1900) % 100);
   const jd = 367 * year - Math.floor(7 * (year + Math.floor((month + 10) / 12)) / 4) + Math.floor(275 * (month + 1) / 9) + day + 1721013.5;
   const daysSinceNew = jd - 2451549.5;
   const newMoons = daysSinceNew / 29.53;
@@ -936,10 +1056,22 @@ function calculateGanzhi() {
 }
 
 function finishOnboarding() {
-  document.getElementById('splash').classList.add('hidden');
-  document.getElementById('appHeader').style.display = 'flex';
-  document.getElementById('bottomNav').style.display = 'flex';
-  initApp();
+  try {
+    const splash = document.getElementById('splash');
+    const header = document.getElementById('appHeader');
+    const nav = document.getElementById('bottomNav');
+    if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; splash.style.pointerEvents = 'none'; }
+    if (header) header.style.display = 'flex';
+    if (nav) nav.style.display = 'flex';
+    setTimeout(() => { if (splash) splash.style.display = 'none'; }, 800);
+    initApp();
+  } catch (e) {
+    console.error('Erro no onboarding:', e);
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('appHeader').style.display = 'flex';
+    document.getElementById('bottomNav').style.display = 'flex';
+    initApp();
+  }
 }
 
 function initApp() {
@@ -963,7 +1095,6 @@ function renderWeekTracker() {
   const week = getWeekUsage();
   const container = document.getElementById('weekTracker');
   container.innerHTML = '';
-  const dayNames = ['D','S','T','Q','Q','S','S'];
   const today = new Date().getDay();
   for (let i = 0; i < 7; i++) {
     const dot = document.createElement('div');
@@ -1015,6 +1146,10 @@ function goToWeekly() {
   goToPage('weekly');
 }
 
+function goToDiario() {
+  goToPage('diario');
+}
+
 function toggleCustomArea() {
   const sel = document.getElementById('consultaArea');
   document.getElementById('customArea').style.display = sel.value === 'outros' ? 'block' : 'none';
@@ -1033,23 +1168,23 @@ function fazerConsulta() {
   const areaText = area === 'outros' ? (customArea || 'Outros') : areaLabels[area];
 
   const reflexoes = [
-    `Como ${user.animal} de ${elem.name} ${pol.name}, você carrega ${animal.areas[areaKey] || animal.areas.crescimento}. A pergunta sobre ${areaText.toLowerCase()} ecoa essa energia.`,
-    `Seu ${user.animal} de ${elem.name} ${pol.name} tende a ${pol.tendency.toLowerCase()}. Na área de ${areaText.toLowerCase()}, isso se manifesta como ${animal.areas[areaKey] || animal.areas.crescimento}.`,
-    `O elemento ${elem.name} traz ${elem.quality.toLowerCase()}. Cruzado com seu ${user.animal} ${pol.name}, sua pergunta sobre ${areaText.toLowerCase()} revela: ${animal.areas[areaKey] || animal.areas.crescimento}.`
+    `Como ${user.animal} de ${elem.name} ${pol.name}, você carrega em si a qualidade de ${animal.areas[areaKey] || animal.areas.crescimento}. A pergunta que trouxe sobre ${areaText.toLowerCase()} não chegou por acaso — ela ecoa exatamente onde sua energia natural encontra resistência. O que você está sentindo não é obstáculo, é ponto de encontro entre quem você é e quem está se tornando.`,
+    `Seu ${user.animal} de ${elem.name} ${pol.name} tende naturalmente a ${pol.tendency.toLowerCase()}. Na área de ${areaText.toLowerCase()}, isso se manifesta como ${animal.areas[areaKey] || animal.areas.crescimento}. Mas toda qualidade, quando excessiva, vira desafio. A pergunta que você faz hoje é um convite para encontrar o equilíbrio — não abandonar sua natureza, mas dançar com ela de forma mais consciente.`,
+    `O elemento ${elem.name} traz para você a energia de ${elem.quality.toLowerCase()}. Cruzado com seu ${user.animal} ${pol.name}, sua pergunta sobre ${areaText.toLowerCase()} revela algo importante: ${animal.areas[areaKey] || animal.areas.crescimento}. Isso não é uma sentença — é um espelho. O que você vê nele é informação, não condenação.`
   ];
 
   const iluminacoes = [
-    `A pergunta que você trouxe não pede resposta — pede presença. ${animal.strength} é seu dom, mas ${animal.challenge.toLowerCase()} pode estar no caminho. O que essa pergunta espelha sobre seu padrão?`,
-    `Você não está perdido. Está no lugar exato onde ${user.element} e ${user.animal} se encontram. A iluminação está em notar que ${animal.challenge.toLowerCase()} não é defeito — é sinal de onde crescer.`,
-    `Sua pergunta sobre ${areaText.toLowerCase()} não é sobre o futuro. É sobre como você, ${user.animal} de ${elem.name}, relaciona-se com o agora. ${elem.impact}.`
+    `A pergunta que você trouxe não pede resposta pronta — pede presença. ${animal.strength} é seu dom mais luminoso, mas ${animal.challenge.toLowerCase()} pode estar operando nos bastidores sem que você perceba. A iluminação está em notar que ${animal.challenge.toLowerCase()} não é defeito a ser corrigido, é sinal de onde você ainda pode expandir. Onde essa qualidade apareceu recentemente sem ser convidada?`,
+    `Você não está perdido. Está no lugar exato onde ${user.element} e ${user.animal} se encontram para ensinar algo novo. ${elem.impact}. A iluminação vem quando você para de lutar contra sua natureza e começa a cooperar com ela. O que seria possível se você usasse ${animal.strength.toLowerCase()} como ponto de partida em vez de escudo?`,
+    `Sua pergunta sobre ${areaText.toLowerCase()} não é sobre prever o futuro — é sobre compreender o presente. Como ${user.animal} de ${elem.name}, você relaciona-se com essa área de uma forma única: ${animal.areas[areaKey] || animal.areas.crescimento}. A iluminação está em reconhecer que esse padrão já serviu você muitas vezes. Agora, a pergunta é: ele ainda serve?`
   ];
 
   const perguntasReflexivas = [
-    `Se ${animal.strength.toLowerCase()} é sua verdade, o que ${animal.challenge.toLowerCase()} está tentando te ensinar agora?`,
-    `O que você já sabe sobre ${areaText.toLowerCase()}, mas ainda não quis ver?`,
-    `Se ninguém pudesse te julgar, qual seria sua primeira ação em relação a isso?`,
-    `${elem.impact}. Onde você sente isso no corpo?`,
-    `O que ${user.animal} de ${elem.name} ${pol.name} faria se não tivesse medo?`
+    `Se ${animal.strength.toLowerCase()} é sua verdade mais profunda, o que ${animal.challenge.toLowerCase()} está tentando te ensinar agora, exatamente nesse momento?`,
+    `O que você já sabe sobre ${areaText.toLowerCase()}, mas ainda não quis ver porque ver exigiria uma mudança?`,
+    `Se ninguém pudesse te julgar — nem você mesmo — qual seria sua primeira ação verdadeira em relação a isso?`,
+    `${elem.impact}. Quando você lê isso, onde sente isso no corpo? A resposta está mais perto do que pensa.`,
+    `O que ${user.animal} de ${elem.name} ${pol.name} faria se descobrisse que o medo que sente é, na verdade, excitação mal interpretada?`
   ];
 
   const reflexao = randomItem(reflexoes);
@@ -1099,7 +1234,13 @@ function salvarDiario() {
 
 function renderDiario() {
   const list = document.getElementById('diarioList');
-  document.getElementById('diarioCount').textContent = `${diary.length} reflexão${diary.length !== 1 ? 'ões' : ''}`;
+  const count = diary.length;
+  let countText;
+  if (count === 0) countText = '0 reflexões';
+  else if (count === 1) countText = '1 reflexão';
+  else countText = `${count} reflexões`;
+  document.getElementById('diarioCount').textContent = countText;
+  
   if (diary.length === 0) {
     list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Seu diário está vazio.<br>As reflexões guardadas aparecerão aqui.</p></div>`;
     return;
@@ -1144,14 +1285,24 @@ function fillCompatSelects() {
 }
 
 function calcularCompat() {
-  const s1 = document.getElementById('compat1').value;
-  const s2 = document.getElementById('compat2').value;
-  const a1 = animals.find(a => a.name === s1);
-  const a2 = animals.find(a => a.name === s2);
-  const text = compatData[s1]?.[s2] || "Energia neutra. Observe sem julgar.";
-  document.getElementById('compatResult').style.display = 'block';
-  document.getElementById('compatHeart').textContent = a1.emoji + ' ⟷ ' + a2.emoji;
-  document.getElementById('compatText').textContent = text;
+  try {
+    const s1 = document.getElementById('compat1').value;
+    const s2 = document.getElementById('compat2').value;
+    if (!s1 || !s2) return;
+    const a1 = animals.find(a => a.name === s1);
+    const a2 = animals.find(a => a.name === s2);
+    const text = compatData[s1]?.[s2] || "Energia neutra. Observe sem julgar. Cada encontro é único e não pode ser totalmente definido por signos.";
+    const resultDiv = document.getElementById('compatResult');
+    const heartDiv = document.getElementById('compatHeart');
+    const textDiv = document.getElementById('compatText');
+    if (resultDiv) resultDiv.style.display = 'block';
+    if (heartDiv) heartDiv.textContent = (a1?.emoji || '') + ' ⟷ ' + (a2?.emoji || '');
+    if (textDiv) textDiv.textContent = text;
+    setTimeout(() => { resultDiv?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+  } catch (e) {
+    console.error('Erro na compatibilidade:', e);
+    alert('Ocorreu um erro ao calcular. Tente novamente.');
+  }
 }
 
 function render2026() {
@@ -1164,6 +1315,21 @@ function render2026() {
       </div>
     </div>
   `).join('');
+}
+
+function showPersonal2026() {
+  if (!user) return;
+  const data = personal2026Data[user.animal]?.[user.element]?.[user.polarity];
+  if (!data) return;
+  document.getElementById('p2026Emoji').textContent = user.emoji;
+  document.getElementById('p2026Title').textContent = `${user.animal} de ${elements[user.element].name} ${polarities[user.polarity].name}`;
+  document.getElementById('p2026Sub').textContent = 'Sua leitura expandida para 2026';
+  document.getElementById('p2026Text').textContent = data;
+  document.getElementById('personal2026').style.display = 'block';
+  document.getElementById('btnPersonal2026').style.display = 'none';
+  setTimeout(() => {
+    document.getElementById('personal2026').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
 }
 
 function updateProfile() {
@@ -1193,17 +1359,15 @@ function resetApp() {
 window.addEventListener('DOMContentLoaded', () => {
   if (user) {
     setTimeout(() => {
-      document.getElementById('splash').classList.add('hidden');
-      document.getElementById('appHeader').style.display = 'flex';
-      document.getElementById('bottomNav').style.display = 'flex';
-      initApp();
+      finishOnboarding();
     }, 2000);
   } else {
     setTimeout(() => {
-      document.getElementById('splash').classList.add('hidden');
+      const splash = document.getElementById('splash');
+      if (splash) splash.classList.add('hidden');
     }, 2500);
   }
 });
 </script>
 </body>
-</html> 
+</html>
